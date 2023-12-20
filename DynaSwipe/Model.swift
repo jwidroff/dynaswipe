@@ -1,0 +1,2348 @@
+//
+//  Model.swift
+//  DynaSwipe
+//
+//  Created by Jeffery Widroff on 12/20/23.
+//
+
+
+import Foundation
+import UIKit
+
+//TODO: 3 ways to make pieces disappear: 1) Line across the board 2) 7 pieces grouped 3) a group that surrounds pieces
+
+//TODO: Make it that if no pieces can move, the board shakes and nothing happens
+
+
+//TODO: Make it that if no pieces move on a swipe, no piece is added
+
+//TODO: Make initial text of the game the first time its played say "Swipe in any direction"
+
+//TODO: New issue - When a piece is trapped in another group of pieces, when you swipe in any direction it doesnt move because of the fact that the middle piece cant move (although this may be able to be fixed by the fact that all of those pieces will have been removed anyway
+
+//TODO: Issue regarding the grouping of the pieces together still doesnt seem to be fixed
+
+//TODO: When groups are intertwined, the groups dont seem to move properly. need to perhaps consider identifying these circumstances and then considering them to be one group for that one move and see if all of the pieces can move together (like a "C" shaped pieces around a part thats sticking out from a group of pieces)
+
+
+//TODO: Put the nextPiece in the center of the board
+
+protocol ModelDelegate {
+    func setUpGameViews(board: Board)
+    func setUpControlViews()
+    func setUpPiecesView()
+    func movePieceView(piece: Piece)
+    func addPieceView(piece: Piece)
+    func removeView(view: UIView)
+    func runPopUpView(title: String, message: String)
+    func clearPiecesAnimation(view: UIView)
+    func removeViews()
+    func addSwipeGestureRecognizer(view: UIView)
+    func enlargePiece(view: UIView)
+//    func setupInstructionsView(instructions: Instructions)
+    func setUpNextView(nextPiece: Piece)
+    func shrinkPiece(view: UIView)
+    func animateGrouping(piece: Piece)
+}
+
+class Model {
+    
+    var board = Board()
+    var delegate: ModelDelegate?
+    let defaults = UserDefaults.standard
+    var colors = PieceColors()
+    var piecesMoved = false
+    var red = PieceColors().colors["red"]!
+    var blue = PieceColors().colors["blue"]!
+    var green = PieceColors().colors["green"]!
+    var purple = PieceColors().colors["purple"]!
+    var yellow = PieceColors().colors["yellow"]!
+    var orange = PieceColors().colors["orange"]!
+    var groupCount = 0
+    var nextPiece = Piece()
+//    var groups2Rerun = [[Group]]()
+    var groups2Return = [Group]()
+    var blockeeAndBlockers = [Int: [Int]]()
+
+    
+    init(){
+        
+    }
+    
+    func setUpGame() {
+        
+        setLevel()
+        setBoard()
+    }
+    
+    func setUpControlsAndInstructions() {
+        
+        delegate?.setUpControlViews()
+//        setupInstructions()
+        setupNextView()
+    }
+    
+    func setLevel() {
+        
+        board.heightSpaces = 10
+        board.widthSpaces = 10
+        
+        let piece5 = Piece(indexes: Indexes(x: 1, y: 7), color: red)
+        
+        let piece1 = Piece(indexes: Indexes(x: 2, y: 6), color: red)
+                
+        let piece3 = Piece(indexes: Indexes(x: 2, y: 8), color: red)
+        
+        let piece4 = Piece(indexes: Indexes(x: 1, y: 6), color: red)
+        let piece6 = Piece(indexes: Indexes(x: 1, y: 8), color: red)
+        let piece7 = Piece(indexes: Indexes(x: 3, y: 8), color: red)
+        
+        let piece8 = Piece(indexes: Indexes(x: 1, y: 5), color: red)
+
+        let piece9 = Piece(indexes: Indexes(x: 1, y: 4), color: red)
+
+        let piece99 = Piece(indexes: Indexes(x: 2, y: 4), color: red)
+        
+        let piece98 = Piece(indexes: Indexes(x: 3, y: 6), color: red)
+        
+        let piece97 = Piece(indexes: Indexes(x: 3, y: 7), color: red)
+        
+        let group1 = Group(pieces: [piece5, piece1, piece3, piece4, piece6, piece7, piece8, piece9, piece99, piece98, piece97])
+        
+        
+        group1.id = 1
+        
+
+        
+        
+        let piece10 = Piece(indexes: Indexes(x: 6, y: 6), color: blue)
+
+//        let piece11 = Piece(indexes: Indexes(x: 6, y: 7), color: blue)
+
+        let piece12 = Piece(indexes: Indexes(x: 5, y: 6), color: blue)
+        
+        let piece13 = Piece(indexes: Indexes(x: 6, y: 5), color: blue)
+
+        let piece14 = Piece(indexes: Indexes(x: 6, y: 4), color: blue)
+
+        let piece15 = Piece(indexes: Indexes(x: 5, y: 4), color: blue)
+        
+       
+        
+        
+        let group2 = Group(pieces: [piece12, piece10, piece13, piece14, piece15])
+
+
+        group2.id = 2
+        
+        
+        
+        let piece20 = Piece(indexes: Indexes(x: 1, y: 4), color: green)
+//        board.pieces.append(piece15)
+        
+        let piece21 = Piece(indexes: Indexes(x: 2, y: 3), color: green)
+        
+//        let piece2 = Piece(indexes: Indexes(x: 1, y: 3), color: red)
+        
+        let piece22 = Piece(indexes: Indexes(x: 5, y: 5), color: green)
+        
+        let piece23 = Piece(indexes: Indexes(x: 1, y: 3), color: green)
+        let piece24 = Piece(indexes: Indexes(x: 1, y: 5), color: green)
+        let piece25 = Piece(indexes: Indexes(x: 3, y: 3), color: green)
+        
+        
+        let group3 = Group(pieces: [piece22])//, piece21, piece20, piece23, piece24, piece25])
+        
+        
+        group3.id = 3
+        
+        
+        
+        let piece30 = Piece(indexes: Indexes(x: 3, y: 5), color: orange)
+        let piece31 = Piece(indexes: Indexes(x: 3, y: 4), color: orange)
+        let piece32 = Piece(indexes: Indexes(x: 3, y: 3), color: orange)
+        let piece33 = Piece(indexes: Indexes(x: 2, y: 2), color: orange)
+        let piece34 = Piece(indexes: Indexes(x: 2, y: 5), color: orange)
+        let piece35 = Piece(indexes: Indexes(x: 3, y: 2), color: orange)
+
+
+        let group4 = Group(pieces: [piece30, piece31, piece32, piece33, piece34, piece35])
+
+
+        group4.id = 4
+        
+        
+        let piece40 = Piece(indexes: Indexes(x: 2, y: 7), color: purple)
+
+
+        let group5 = Group(pieces: [piece40])
+
+
+        group5.id = 5
+        
+//        board.pieces.append(piece15)
+        
+        
+        let piece50 = Piece(indexes: Indexes(x: 2, y: 1), color: yellow)
+
+//        let piece11 = Piece(indexes: Indexes(x: 6, y: 7), color: blue)
+
+        let piece51 = Piece(indexes: Indexes(x: 1, y: 1), color: yellow)
+        
+        let piece52 = Piece(indexes: Indexes(x: 1, y: 2), color: yellow)
+
+        let piece53 = Piece(indexes: Indexes(x: 1, y: 3), color: yellow)
+
+        let piece54 = Piece(indexes: Indexes(x: 2, y: 3), color: yellow)
+        
+//        let piece55 = Piece(indexes: Indexes(x: 1, y: 0), color: yellow)
+        
+        
+        
+        let group6 = Group(pieces: [piece50, piece51, piece52, piece53, piece54])//, piece55])
+
+
+        group6.id = 6
+        
+        
+        
+        
+        
+        
+//        let piece16 = Piece(indexes: Indexes(x: 0, y: 2), color: red)
+////        board.pieces.append(piece16)
+//
+//
+//        let group6 = Group(pieces: [piece16])
+//        group6.id = 6
+        
+        
+        
+        board.pieceGroups = [group1, group4, group5, group3, group2, group6]
+        
+        
+        for group in board.pieceGroups {
+            
+            for piece in group.pieces {
+                
+                
+                piece.groupNumber = group.id
+                
+            }
+            
+        }
+
+    }
+    
+    func setBoard() {
+        
+        delegate?.setUpGameViews(board: self.board)
+        delegate?.setUpPiecesView()
+    }
+    
+    func setupNextView() {
+        
+        nextPiece = Piece(indexes: Indexes(x: nil, y: nil), color: returnRandomColor())
+        delegate?.setUpNextView(nextPiece: nextPiece)
+    }
+    
+    func returnRandomColor() -> UIColor {
+        
+//        print("returnRandomColor called")
+        
+        
+        var color2Return = UIColor()
+        let colors = PieceColors()
+        let pieceColors = colors.colors
+        let randomColors = ["red","blue","green","purple", "yellow", "orange"]
+        let randomIndex = arc4random_uniform(UInt32(randomColors.count))
+        color2Return = pieceColors[randomColors[Int(randomIndex)]]!
+        return color2Return
+    }
+
+    
+//    func setupInstructions() {
+//
+//        if board.instructions == nil {
+//            return
+//        } else {
+//            delegate?.setupInstructionsView(instructions: board.instructions!)
+//        }
+//    }
+    
+    private func setPieceIndex(piece: Piece) {
+
+        let index = Indexes(x: Int(arc4random_uniform(UInt32(board.widthSpaces))), y: Int(arc4random_uniform(UInt32(board.heightSpaces))))
+
+        var useIndexes = true
+        
+        for group in board.pieceGroups {
+            
+            if group.pieces.contains(where: { (pieceX) -> Bool in
+                pieceX.indexes == index
+            }){
+                
+                useIndexes = false
+                
+            }
+            
+        }
+        
+        if useIndexes == true{
+            piece.indexes = index
+        } else {
+            setPieceIndex(piece: piece)
+        }
+    }
+    
+    func isNextSpaceBlocked(direction: Direction, indexes: Indexes, pieces: [Piece]) -> Bool {
+        
+        var bool = true
+
+        switch direction {
+        case .up:
+            if pieces.contains(where: { (piece) -> Bool in
+                piece.indexes == Indexes(x: indexes.x, y: indexes.y! - 1)
+            }){
+                bool = false
+            }
+            
+        case .down:
+            if pieces.contains(where: { (piece) -> Bool in
+                piece.indexes == Indexes(x: indexes.x, y: indexes.y! + 1)
+            }){
+                bool = false
+            }
+            
+        case .left:
+            if pieces.contains(where: { (piece) -> Bool in
+                piece.indexes == Indexes(x: indexes.x! - 1, y: indexes.y)
+            }){
+                bool = false
+            }
+            
+        case .right:
+            if pieces.contains(where: { (piece) -> Bool in
+                piece.indexes == Indexes(x: indexes.x! + 1, y: indexes.y)
+            }){
+                bool = false
+            }
+        default:
+            break
+        }
+        return bool
+    }
+    
+    func getPieceInfo(index: Indexes, pieces: [Piece]) -> Piece? {
+        
+        var piece = Piece()
+        
+        for pieceX in pieces {
+            
+            if pieceX.indexes == index {
+                
+                piece = pieceX
+            }
+        }
+        return piece
+    }
+    
+    func movePiecesHelper(piece: Piece, direction: Direction) {
+        
+        if let indexes = piece.indexes {
+            
+            switch direction {
+                
+            case .up:
+                
+//                let spaceIsntBlocked = isNextSpaceBlocked(direction: .up, indexes: indexes, pieces: [Piece]())
+//
+//                if spaceIsntBlocked {
+                    
+                    if indexes.y != 0 {
+                        piece.indexes?.y = (indexes.y)! - 1
+                        piecesMoved = true
+                    }
+//                } else {
+//                    return
+//                }
+                
+            case .down:
+                
+//                let spaceIsntBlocked = isNextSpaceBlocked(direction: .down, indexes: indexes, pieces: board.pieces)
+//
+//                if spaceIsntBlocked {
+                    
+                    if indexes.y != board.heightSpaces - 1 {
+                        piece.indexes?.y = indexes.y! + 1
+                        piecesMoved = true
+                    }
+//                } else {
+//                    return
+//                }
+                
+            case .left:
+                
+//                let spaceIsntBlocked = isNextSpaceBlocked(direction: .left, indexes: indexes, pieces: board.pieces)
+//
+//                if spaceIsntBlocked {
+                    
+                    if indexes.x != 0 {
+                        piece.indexes?.x = indexes.x! - 1
+                        piecesMoved = true
+                    }
+//                } else {
+//                    return
+//                }
+                
+            case .right:
+                
+//                let spaceIsntBlocked = isNextSpaceBlocked(direction: .right, indexes: indexes, pieces: board.pieces)
+//
+//                if spaceIsntBlocked {
+                    
+                    if indexes.x != board.widthSpaces - 1 {
+                        piece.indexes?.x = indexes.x! + 1
+                        piecesMoved = true
+                    }
+                    
+//                } else {
+//                    return
+//                }
+                
+            default:
+                break
+            }
+        }
+    }
+    
+    func pieceIsPartOfAGroup(piece: Piece, groups: [Group]) -> Bool {
+        
+        var bool = false
+        
+        for group in groups {
+            if group.pieces.contains(where: { pieceX -> Bool in
+                piece.indexes == pieceX.indexes
+            }) {
+                bool = true
+            }
+        }
+        return bool
+    }
+    
+    
+    var groupClusterToRetry = [[Group]]()
+    
+    var hookedGroups = [Group]()
+    
+    
+//    func movePiece2(direction: Direction, pieces: [Piece]) {
+//
+//        var groupsToRetry = [Group]()
+//        var piecesToRetry = [Piece]()
+//        var pieceDidMove = false
+//
+////        sortPieces(direction: direction)
+//
+//        for piece in pieces {
+//
+//            if pieceIsPartOfAGroup(piece: piece, groups: board.pieceGroups) == false {
+//
+//                let startIndexes = piece.indexes
+//
+//                movePiecesHelper(piece: piece, direction: direction)
+//
+//                self.delegate?.movePieceView(piece: piece)
+//
+//                let endIndexes = piece.indexes
+//
+//                if startIndexes == endIndexes {
+//
+//                    piecesToRetry.append(piece)
+//                } else {
+//                    pieceDidMove = true
+//                    piecesMoved = true
+//                }
+//            }
+//        }
+//
+//        var groupCanMove = true
+//
+//        for group in board.pieceGroups {
+//
+//
+//
+////            print(group.pieces.map({$0.indexes}))
+//
+//            var groupDidMove = group.didMove
+//
+//            if group.didMove == false {
+//
+//
+//
+//                var piecesIndexes = [Indexes]()
+//
+//                switch direction {
+//
+//                case .up:
+//
+//                    for piece in group.pieces.sorted(by: { (piece1, piece2) -> Bool in
+//                        (piece1.indexes?.y!)! < (piece2.indexes?.y!)!
+//                    }) {
+//
+//                        if board.pieces.contains(where: { pieceX -> Bool in
+//                            pieceX.indexes == Indexes(x: piece.indexes?.x, y: (piece.indexes?.y!)! - 1)
+//                        }) {
+//                            if !group.pieces.contains(where: { pieceXX -> Bool in
+//                                pieceXX.indexes == Indexes(x: piece.indexes?.x, y: (piece.indexes?.y!)! - 1)
+//                            }) {
+//                                groupCanMove = false
+//                            }
+//
+//                        } else {
+//
+//                            if piecesIndexes.contains(where: { indexX -> Bool in
+//                                indexX == Indexes(x: piece.indexes?.x, y: (piece.indexes?.y!)! - 1)
+//                            }) {
+//                                groupCanMove = false
+//                            } else {
+//
+//                                if piece.indexes?.y! != 0 {
+//                                    piecesIndexes.append(Indexes(x: piece.indexes?.x, y: (piece.indexes?.y!)! - 1))
+//                                } else {
+//                                    groupCanMove = false
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    if groupCanMove == true {
+//
+//                        for piece in group.pieces.sorted(by: { (piece1, piece2) -> Bool in
+//                            (piece1.indexes?.y!)! < (piece2.indexes?.y!)!
+//                        }) {
+//
+//                            let beforeIndexes = piece.indexes
+//
+//                            movePiecesHelper(piece: piece, direction: direction)
+//                            self.delegate?.movePieceView(piece: piece)
+//
+//                            let afterIndexes = piece.indexes
+//
+//                            if beforeIndexes != afterIndexes {
+//                                groupDidMove = true
+//                                pieceDidMove = true
+//                                piecesMoved = true
+//                            }
+//                        }
+//                    }
+//
+//                case .down:
+//
+//                    for piece in group.pieces.sorted(by: { (piece1, piece2) -> Bool in
+//                        (piece1.indexes?.y!)! > (piece2.indexes?.y!)!
+//                    }) {
+//
+//                        if board.pieces.contains(where: { pieceX -> Bool in
+//                            pieceX.indexes == Indexes(x: piece.indexes?.x, y: (piece.indexes?.y!)! + 1)
+//                        }) {
+//                            if !group.pieces.contains(where: { pieceXX -> Bool in
+//                                pieceXX.indexes == Indexes(x: piece.indexes?.x, y: (piece.indexes?.y!)! + 1)
+//                            }) {
+//                                groupCanMove = false
+//                            }
+//
+//                        } else {
+//
+//                            if piecesIndexes.contains(where: { indexX -> Bool in
+//                                indexX == Indexes(x: piece.indexes?.x, y: (piece.indexes?.y!)! + 1)
+//                            }) {
+//                                groupCanMove = false
+//                            } else {
+//
+//                                if piece.indexes?.y! != board.heightSpaces - 1 {
+//                                    piecesIndexes.append(Indexes(x: piece.indexes?.x, y: (piece.indexes?.y!)! + 1))
+//                                } else {
+//                                    groupCanMove = false
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    if groupCanMove == true {
+//
+//                        for piece in group.pieces.sorted(by: { (piece1, piece2) -> Bool in
+//                            (piece1.indexes?.y!)! > (piece2.indexes?.y!)!
+//                        }) {
+//
+//                            let beforeIndexes = piece.indexes
+//
+//                            movePiecesHelper(piece: piece, direction: direction)
+//                            self.delegate?.movePieceView(piece: piece)
+//
+//                            let afterIndexes = piece.indexes
+//
+//                            if beforeIndexes != afterIndexes {
+//                                groupDidMove = true
+//                                pieceDidMove = true
+//                                piecesMoved = true
+//                            }
+//                        }
+//                    }
+//
+//                case .left:
+//
+//                    for piece in group.pieces.sorted(by: { (piece1, piece2) -> Bool in
+//                        (piece1.indexes?.x!)! < (piece2.indexes?.x!)!
+//                    }) {
+//
+//                        if board.pieces.contains(where: { pieceX -> Bool in
+//                            pieceX.indexes == Indexes(x: (piece.indexes?.x!)! - 1, y: piece.indexes?.y)
+//                        }) {
+//                            if !group.pieces.contains(where: { pieceXX -> Bool in
+//                                pieceXX.indexes == Indexes(x: (piece.indexes?.x!)! - 1, y: piece.indexes?.y)
+//                            }) {
+//                                groupCanMove = false
+//                            }
+//
+//                        } else {
+//
+//                            if piecesIndexes.contains(where: { indexX -> Bool in
+//                                indexX == Indexes(x: (piece.indexes?.x!)! - 1, y: piece.indexes?.y)
+//                            }) {
+//
+//                                groupCanMove = false
+//
+//                            } else {
+//
+//                                if piece.indexes?.x! != 0 {
+//                                    piecesIndexes.append(Indexes(x: (piece.indexes?.x!)! - 1, y: piece.indexes?.y))
+//                                } else {
+//                                    groupCanMove = false
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    if groupCanMove == true {
+//
+//                        for piece in group.pieces.sorted(by: { (piece1, piece2) -> Bool in
+//                            (piece1.indexes?.x!)! < (piece2.indexes?.x!)!
+//                        }) {
+//
+//                            let beforeIndexes = piece.indexes
+//
+//                            movePiecesHelper(piece: piece, direction: direction)
+//                            self.delegate?.movePieceView(piece: piece)
+//
+//                            let afterIndexes = piece.indexes
+//
+//                            if beforeIndexes != afterIndexes {
+//                                groupDidMove = true
+//                                pieceDidMove = true
+//                                piecesMoved = true
+//                            }
+//                        }
+//                    }
+//
+//                case .right:
+//
+//                    for piece in group.pieces.sorted(by: { (piece1, piece2) -> Bool in
+//                        (piece1.indexes?.x!)! > (piece2.indexes?.x!)!
+//                    }) {
+//
+//                        if board.pieces.contains(where: { pieceX -> Bool in
+//                            pieceX.indexes == Indexes(x: (piece.indexes?.x!)! + 1, y: piece.indexes?.y)
+//                        }) {
+//                            if !group.pieces.contains(where: { pieceXX -> Bool in
+//                                pieceXX.indexes == Indexes(x: (piece.indexes?.x!)! + 1, y: piece.indexes?.y)
+//                            }) {
+//                                groupCanMove = false
+//                            }
+//
+//                        } else {
+//
+//                            if piecesIndexes.contains(where: { indexX -> Bool in
+//                                indexX == Indexes(x: (piece.indexes?.x!)! + 1, y: piece.indexes?.y)
+//                            }) {
+//
+//                                groupCanMove = false
+//                            } else {
+//
+//                                if piece.indexes?.x! != board.widthSpaces - 1 {
+//                                    piecesIndexes.append(Indexes(x: (piece.indexes?.x!)! + 1, y: piece.indexes?.y))
+//                                } else {
+//                                    groupCanMove = false
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    if groupCanMove == true {
+//
+//                        for piece in group.pieces.sorted(by: { (piece1, piece2) -> Bool in
+//                            (piece1.indexes?.x!)! > (piece2.indexes?.x!)!
+//                        }) {
+//
+//                            let beforeIndexes = piece.indexes
+//
+//                            movePiecesHelper(piece: piece, direction: direction)
+//                            self.delegate?.movePieceView(piece: piece)
+//
+//                            let afterIndexes = piece.indexes
+//
+//                            if beforeIndexes != afterIndexes {
+//                                groupDidMove = true
+//                                pieceDidMove = true
+//                                piecesMoved = true
+//                            }
+//                        }
+//                    }
+//
+//                default:
+//
+//                    break
+//                }
+//            }
+//            group.didMove = groupDidMove
+//        }
+//
+//        if pieceDidMove {
+//
+//            movePiece2(direction: direction, pieces: piecesToRetry)
+//        }
+//
+////        if groupCanMove == false {
+////
+//////            groupClusterToRetry.append(groupsToRetry)
+////            print(groupClusterToRetry.map({$0.map({$0.hookedPieces.map({$0.groupNumber!})})}))
+////
+////        }
+//
+//        print(hookedGroups.map({$0.number}))
+//
+//
+//    }
+    
+    func movePieces(direction: Direction) {
+
+        sortGroups(direction: direction)
+
+        moveGroups(direction: direction)
+        
+        
+//        let nextPiece = nextPiece
+        
+        setPieceIndex(piece: nextPiece)
+//        board.pieces.append(nextPiece)
+        
+        let group = Group(pieces: [nextPiece])
+        group.id = board.pieceGroups.map({$0.id}).max()! + 1
+        nextPiece.groupNumber = group.id
+        board.pieceGroups.append(group)
+        
+        delegate?.addPieceView(piece: nextPiece)
+        groupPiecesTogetherX()
+        updateLabels()
+    }
+    
+    func groupCanMoveX(group: Group, direction: Direction) -> Bool {
+        
+        //MARK: MAKE SURE THIS IS WORKING CORRECTLY FOR RIGHT AND LEFT
+        
+        var boolToReturn = true
+        
+        switch direction {
+            
+        case .up:
+            
+            for piece in group.pieces{
+                
+//                    print()
+//                    print(piece.indexes!)
+                
+                if piece.indexes?.y != 0 {
+                    
+                    for groupX in board.pieceGroups {
+                        
+                        for pieceX in groupX.pieces {
+                            
+                            if pieceX.indexes == Indexes(x: piece.indexes!.x, y: piece.indexes!.y! - 1) {
+                                
+//                                    print("There is a piece in front")
+                                
+                                if !group.pieces.contains(where: { (piece3) in
+                                    piece3.indexes == Indexes(x: piece.indexes!.x, y: piece.indexes!.y! - 1)
+                                    
+                                }) {
+                                    boolToReturn = false
+//                                        print("Piece is from this group group")
+
+                                } else {
+//                                        print("Piece is from another group")
+                                    
+                                    
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    
+                    boolToReturn = false
+                }
+                
+//                    print(groupCanMove)
+            }
+            
+        case .down:
+            
+            for piece in group.pieces {
+                
+//                    print()
+//                    print(piece.indexes!)
+                
+                if piece.indexes?.y != board.heightSpaces - 1{
+                    
+                    for groupX in board.pieceGroups {
+                        
+                        for pieceX in groupX.pieces {
+                            
+                            if pieceX.indexes == Indexes(x: piece.indexes!.x, y: piece.indexes!.y! + 1) {
+                                
+//                                    print("There is a piece in front")
+                                
+                                if !group.pieces.contains(where: { (piece3) in
+                                    piece3.indexes == Indexes(x: piece.indexes!.x, y: piece.indexes!.y! + 1)
+                                    
+                                }) {
+                                    
+                                    boolToReturn = false
+//                                        print("Piece is from this group group")
+
+                                } else {
+//                                        print("Piece is from another group")
+                                    
+                                    
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    
+                    boolToReturn = false
+                }
+                
+//                    print(groupCanMove)
+            }
+            
+        case .left:
+            
+            for piece in group.pieces{
+                
+//                    print()
+//                    print(piece.indexes!)
+                
+                if piece.indexes?.x != 0 {
+                    
+                    for groupX in board.pieceGroups {
+                        
+                        for pieceX in groupX.pieces {
+                            
+                            if pieceX.indexes == Indexes(x: piece.indexes!.x! - 1, y: piece.indexes!.y) {
+                                
+//                                    print("There is a piece in front")
+                                
+                                if !group.pieces.contains(where: { (piece3) in
+                                    piece3.indexes == Indexes(x: piece.indexes!.x! - 1, y: piece.indexes!.y)
+                                    
+                                }) {
+                                    boolToReturn = false
+//                                        print("Piece is from this group group")
+
+                                } else {
+//                                        print("Piece is from another group")
+                                    
+                                    
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    
+                    boolToReturn = false
+                }
+                
+//                    print(groupCanMove)
+            }
+
+            
+        case .right:
+            
+            for piece in group.pieces{
+                
+//                    print()
+//                    print(piece.indexes!)
+                
+                if piece.indexes?.x != board.widthSpaces - 1 {
+                    
+                    for groupX in board.pieceGroups {
+                        
+                        for pieceX in groupX.pieces {
+                            
+                            if pieceX.indexes == Indexes(x: piece.indexes!.x! + 1, y: piece.indexes!.y) {
+                                
+//                                    print("There is a piece in front")
+                                
+                                if !group.pieces.contains(where: { (piece3) in
+                                    piece3.indexes == Indexes(x: piece.indexes!.x! + 1, y: piece.indexes!.y)
+                                    
+                                }) {
+                                    
+                                    boolToReturn = false
+//                                        print("Piece is from this group group")
+
+                                } else {
+//                                        print("Piece is from another group")
+                                   
+                                    
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    
+                    boolToReturn = false
+                }
+                
+//                    print(groupCanMove)
+            }
+
+
+            
+        default:
+            
+            break
+            
+        }
+        
+        
+        
+        return boolToReturn
+    }
+   
+    func moveAllGrpPcs(group: Group, direction: Direction) {
+        
+        switch direction{
+            
+        case .up:
+            
+            for piece in group.pieces.sorted(by: { (piece1, piece2) in
+                piece1.indexes!.y! < piece2.indexes!.y!
+            }) {
+                movePiecesHelper(piece: piece, direction: direction)
+                self.delegate?.movePieceView(piece: piece)
+            }
+            
+        case .down:
+            
+            for piece in group.pieces.sorted(by: { (piece1, piece2) in
+                piece1.indexes!.y! > piece2.indexes!.y!
+            }) {
+                movePiecesHelper(piece: piece, direction: direction)
+                self.delegate?.movePieceView(piece: piece)
+            }
+            
+        case .left:
+            
+            for piece in group.pieces.sorted(by: { (piece1, piece2) in
+                piece1.indexes!.x! < piece2.indexes!.x!
+            }) {
+                movePiecesHelper(piece: piece, direction: direction)
+                self.delegate?.movePieceView(piece: piece)
+            }
+            
+        case .right:
+            
+            for piece in group.pieces.sorted(by: { (piece1, piece2) in
+                piece1.indexes!.x! > piece2.indexes!.x!
+            }) {
+                movePiecesHelper(piece: piece, direction: direction)
+                self.delegate?.movePieceView(piece: piece)
+            }
+            
+        default:
+            
+            break
+            
+        }
+        
+    }
+    
+    
+
+    var masterGroupOfGroupsX = [[Int]]()
+
+    
+    func moveGroups(direction: Direction) {
+        
+        var tempGroupIDs = [Int: [Int]]()
+        
+        piecesMoved = false
+        
+        for group in board.pieceGroups {
+            
+//            print("group number = \(group.id)")
+            
+            if groupCanMoveX(group: group, direction: direction) == true {
+                
+                moveAllGrpPcs(group: group, direction: direction)
+                
+            } else {
+                
+                tempGroupIDs = returnGroupHookGroups(group: group, direction: direction)
+                
+                
+//                print("tempGroups \(tempGroupIDs)")
+            }
+        }
+        
+        
+//        print("tempGroupIDs =  \(tempGroupIDs)")
+        
+        var groupedGroups = [[Int]]()
+        var currentSetToCheck = [Int]()
+        
+        for (hook, hookies) in tempGroupIDs {
+            currentSetToCheck.append(hook)
+            for hookie in hookies {
+                currentSetToCheck.append(hookie)
+            }
+            groupedGroups.append(currentSetToCheck)
+            currentSetToCheck = [Int]()
+        }
+        
+        
+//        print("groupedGroups \(groupedGroups)")
+        
+        
+        for groupX in groupedGroups.sorted(by: { (group1, group2) in
+            group1.count > group2.count
+        }) {
+            
+            var addWholeGroup = false
+            
+            if masterGroupOfGroupsX.isEmpty {
+                
+//                print("masterGroupOfGroups is empty")
+                masterGroupOfGroupsX.append(groupX)
+                
+            } else {
+                
+                //IF ANY GROUPS INCLUDE ANY OF THE NUMBERS, ADD ALL NUMBERS TO THAT GROUP AND STOP THE FUNC
+                
+                var counter = 0
+                var index2AddTo = Int()
+                
+                for masterGroup in masterGroupOfGroupsX {
+                    
+                    for numX in groupX {
+                        
+                        for numY in masterGroup {
+                            
+                            if numX == numY {
+                                
+                                index2AddTo = counter
+                                addWholeGroup = true
+//                                print("This entire group should be added to this mastergroup")
+                                
+                            }
+                        }
+                    }
+                    counter += 1
+                }
+                
+                
+                if addWholeGroup == true {
+                    
+                    addWholeGroup = false
+                    
+                    for number in groupX {
+                        
+                        if !masterGroupOfGroupsX[index2AddTo].contains(where: { (IntXXX) in
+                            IntXXX == number
+                        }) {
+                            masterGroupOfGroupsX[index2AddTo].append(number)
+                            
+                        }
+                    }
+                    
+                } else {
+                    
+//                    print("appending the entire group")
+                    masterGroupOfGroupsX.append(groupX)
+                    
+                    
+                }
+            }
+        }
+        
+        print("masterGroupOfGroupsX \(masterGroupOfGroupsX)")
+        
+        
+        
+        for masterGroup in masterGroupOfGroupsX {
+            
+            if masterGroup.count > 1 {
+                moveHooks(arrayOfInts: masterGroup, direction: direction)
+
+            }
+            
+        }
+        
+        masterGroupOfGroupsX = [[Int]]()
+        
+        
+        if piecesMoved == true {
+            
+//            sortGroups(direction: direction)
+            moveGroups(direction: direction)
+            
+        }
+    
+    }
+    
+    
+    func moveHooks (arrayOfInts: [Int], direction: Direction) {
+        
+        //MARK: NEED TO MAKE SURE THAT THIS WORKS FOR LEFT & RIGHT
+        
+//        print("")
+//
+//        print("hooksCanMove")
+        
+        
+        var bool = true
+        
+        var piecesY = [Piece]()
+        
+        for number in arrayOfInts {
+            
+            let group = returnGroup(groupNumber: number)
+            
+            let piecesX = group.pieces
+            
+            for pieceX in piecesX {
+                
+                
+                piecesY.append(pieceX)
+            }
+            
+        }
+        
+        for pieceY in piecesY {
+            
+                switch direction {
+                    
+                    
+                case .up:
+                    
+                    if (pieceY.indexes?.y)! == 0 {
+                        
+                        bool = false
+                        
+                        
+                    } else {
+                        
+                        
+                        for group in board.pieceGroups {
+                            
+                            for piece in group.pieces {
+                                
+                                if piece.indexes?.x == pieceY.indexes?.x && piece.indexes?.y == (pieceY.indexes?.y)! - 1 {
+                                    
+                                    
+                                    if !arrayOfInts.contains(where: { (numX) in
+                                        numX == piece.groupNumber
+                                    }) {
+                                        bool = false
+                                    }
+                                    
+                                    
+                                }
+                                
+                            }
+                            
+                        }
+                    }
+                case .down:
+                    
+                    if (pieceY.indexes?.y)! == board.heightSpaces - 1 {
+                        
+                        bool = false
+                        
+                        
+                    } else {
+                        
+                        
+                        for group in board.pieceGroups {
+                            
+                            for piece in group.pieces {
+                                
+                                if piece.indexes?.x == pieceY.indexes?.x && piece.indexes?.y == (pieceY.indexes?.y)! + 1 {
+                                    
+                                    
+                                    if !arrayOfInts.contains(where: { (numX) in
+                                        numX == piece.groupNumber
+                                    }) {
+                                        bool = false
+                                    }
+                                    
+                                    
+                                }
+                                
+                            }
+                            
+                        }
+                    }
+
+                case .left:
+                    
+                    if (pieceY.indexes?.x)! == 0 {
+                        
+                        bool = false
+                        
+                        
+                    } else {
+                        
+                        
+                        for group in board.pieceGroups {
+                            
+                            for piece in group.pieces {
+                                
+                                if piece.indexes?.x == (pieceY.indexes?.x)! - 1 && piece.indexes?.y == (pieceY.indexes?.y) {
+                                    
+                                    
+                                    if !arrayOfInts.contains(where: { (numX) in
+                                        numX == piece.groupNumber
+                                    }) {
+                                        bool = false
+                                    }
+                                    
+                                    
+                                }
+                                
+                            }
+                            
+                        }
+                    }
+
+                case .right:
+                    
+                    if (pieceY.indexes?.x)! == board.widthSpaces - 1 {
+                        
+                        bool = false
+                        
+                        
+                    } else {
+                        
+                        
+                        for group in board.pieceGroups {
+                            
+                            for piece in group.pieces {
+                                
+                                if piece.indexes?.x == (pieceY.indexes?.x)! + 1 && piece.indexes?.y == (pieceY.indexes?.y) {
+                                    
+                                    
+                                    if !arrayOfInts.contains(where: { (numX) in
+                                        numX == piece.groupNumber
+                                    }) {
+                                        bool = false
+                                    }
+                                    
+                                    
+                                }
+                                
+                            }
+                            
+                        }
+                    }
+                    
+                default:
+                    
+                    break
+                }
+                
+        }
+        
+        if bool == true {
+            
+            switch direction {
+                
+            case .up:
+
+                for pieceZ in piecesY.sorted(by: { (piece1, piece2) in
+                    (piece1.indexes?.y)! < (piece2.indexes?.y)!
+                }) {
+                    
+                    pieceZ.indexes?.y! -= 1
+                    
+                    delegate?.movePieceView(piece: pieceZ)
+                    
+                }
+                
+            case .down:
+                
+                for pieceZ in piecesY.sorted(by: { (piece1, piece2) in
+                    (piece1.indexes?.y)! > (piece2.indexes?.y)!
+                }) {
+                    
+                    pieceZ.indexes?.y! += 1
+                    
+                    delegate?.movePieceView(piece: pieceZ)
+                    
+                }
+                
+                
+            case .left:
+                
+                for pieceZ in piecesY.sorted(by: { (piece1, piece2) in
+                    (piece1.indexes?.x)! < (piece2.indexes?.x)!
+                }) {
+                    
+                    pieceZ.indexes?.x! -= 1
+                    
+                    delegate?.movePieceView(piece: pieceZ)
+                    
+                }
+            case .right:
+                
+                for pieceZ in piecesY.sorted(by: { (piece1, piece2) in
+                    (piece1.indexes?.x)! > (piece2.indexes?.x)!
+                }) {
+                    
+                    pieceZ.indexes?.x! += 1
+                    
+                    delegate?.movePieceView(piece: pieceZ)
+                    
+                }
+            default:
+                break
+                
+                
+                
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            piecesMoved = true
+        } else {
+            
+            
+        }
+        
+        
+        
+        
+        
+//        print("bool = \(bool)")
+        
+        
+    }
+    
+    
+    
+    func returnGroup(groupNumber: Int) -> Group {
+            
+            
+            var pieces = [Piece]()
+            var group2Return = Group(pieces: pieces)
+            
+            for group in board.pieceGroups {
+                
+                if group.id == groupNumber {
+                    
+                    group2Return = group
+                    
+                }
+                
+            }
+            
+            return group2Return
+        }
+    
+
+    
+    func returnGroupHookPieces(group: Group, direction: Direction) -> [Piece] {
+        
+        //MARK: NEED TO MAKE SURE THAT THIS WORKS FOR LEFT & RIGHT //CORRECTION - THIS ISNT USED
+        
+//        print("returnGroupHookPieces")
+        
+        var pieces2Return = [Piece]()
+        
+        
+        var currentGroupHookedPieces = [Piece]()
+        
+        var tempIntArray = [Int]()
+
+        switch direction {
+            
+        case .up:
+            
+            for piece in group.pieces.sorted(by: { (piece1, piece2) in
+                piece1.indexes!.y! > piece2.indexes!.y!
+            }) {
+                
+
+                
+                //first check to see if there are pieces next to it, if there arent, skip
+                if group.pieces.contains(where: { piece3 in
+                    (piece3.indexes!.y! == piece.indexes!.y! && piece3.indexes!.x! < piece.indexes!.x!) || (piece3.indexes!.y! == piece.indexes!.y! && piece3.indexes!.x! > piece.indexes!.x!)
+                }) {
+                    
+                    //Now that we know that there is a piece next to it, lets see if there is a piece infront of it, otherwise its not a hook
+                    
+                    if group.pieces.contains(where: { piece3 in
+                        (piece3.indexes!.y! == piece.indexes!.y! - 1 && piece3.indexes!.x! == piece.indexes!.x!)
+                    }) {
+                        
+//                        print("There is a hook!")
+
+                        //Now need to save the "hook" pieces and see what pieces may be above them (these pieces would be the pieces with the same Y axis but different x axis's
+
+                        currentGroupHookedPieces = group.pieces.filter { piece1 in
+                            piece1.indexes!.y! == piece.indexes!.y! && piece1.indexes!.x! != piece.indexes!.x!
+                        }
+                        
+                        //Now need to add all pieces to the left and the right
+
+                        for pieceHook in currentGroupHookedPieces {
+                            
+                            for groupXXX in board.pieceGroups {
+                                
+                                if groupXXX.id != group.id {
+                                    
+                                    for pieceX in groupXXX.pieces {
+                                        
+                                        if pieceX.indexes == Indexes(x: pieceHook.indexes?.x, y: (pieceHook.indexes?.y)! - 1) {
+                                            
+                                            
+//                                            print("Group that is hooking = \(piece.groupNumber)")
+//
+//                                            print("Group that is hooked = \(pieceX.groupNumber)")
+                                            
+                                            
+                                            tempIntArray.append(pieceX.groupNumber)
+                                            
+                                            
+                                            
+                                            
+                                            if !groups2Return.contains(where: { (groupA) in
+                                                groupA.id == piece.groupNumber
+                                            }) {
+                                                
+                                                
+                                                
+                                                groups2Return.append(group)
+                                                
+//                                                print("Groups to return A = \(groups2Return.map({$0.id}))")
+                                                
+                                            }
+                                            
+                                            if !groups2Return.contains(where: { (groupA) in
+                                                groupA.id == pieceX.groupNumber
+                                            }) {
+                                                
+                                                groups2Return.append(groupXXX)
+                                                
+//                                                print("Groups to return B = \(groups2Return.map({$0.id}))")
+                                                
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                
+                
+            }
+            
+//            blockeeAndBlockers[group.id] = tempIntArray
+//            print(blockeeAndBlockers)
+            
+            //break
+            
+        case .down:
+            
+            for piece in group.pieces.sorted(by: { (piece1, piece2) in
+                piece1.indexes!.y! < piece2.indexes!.y! //CHANGE ARROW
+            }) {
+                
+                //first check to see if there are pieces next to it, if there arent, skip
+                if group.pieces.contains(where: { piece3 in
+                    (piece3.indexes!.y! == piece.indexes!.y! && piece3.indexes!.x! < piece.indexes!.x!) || (piece3.indexes!.y! == piece.indexes!.y! && piece3.indexes!.x! > piece.indexes!.x!) //LEFT ALONE
+                }) {
+                    
+                    //Now that we know that there is a piece next to it, lets see if there is a piece infront of it, otherwise its not a hook
+                    
+                    if group.pieces.contains(where: { piece3 in
+                        (piece3.indexes!.y! == piece.indexes!.y! + 1 && piece3.indexes!.x! == piece.indexes!.x!) //CHANGED TO PLUS ONE
+                    }) {
+                        
+//                        print("There is a hook!")
+
+                        //Now need to save the "hook" pieces and see what pieces may be above them (these pieces would be the pieces with the same Y axis but different x axis's
+
+                        currentGroupHookedPieces = group.pieces.filter { piece1 in
+                            piece1.indexes!.y! == piece.indexes!.y! && piece1.indexes!.x! != piece.indexes!.x!
+                        }
+                        
+                        //Now need to add all pieces to the left and the right
+
+                        for pieceHook in currentGroupHookedPieces {
+                            
+                            for groupXXX in board.pieceGroups {
+                                
+                                if groupXXX.id != group.id {
+                                    
+                                    for pieceX in groupXXX.pieces {
+                                        
+                                        if pieceX.indexes == Indexes(x: pieceHook.indexes?.x, y: (pieceHook.indexes?.y)! + 1) { //CHANGED TO PLUS
+                                            
+                                            
+//                                            print("Group that is hooking = \(piece.groupNumber)")
+                                            
+//                                            print("Group that is hooked = \(pieceX.groupNumber)")
+                                            
+                                            
+                                            if !groups2Return.contains(where: { (groupA) in
+                                                groupA.id == piece.groupNumber
+                                            }) {
+                                                
+                                                
+                                                
+                                                groups2Return.append(group)
+                                                
+//                                                print("Groups to return A = \(groups2Return.map({$0.id}))")
+                                                
+                                            }
+                                            
+                                            if !groups2Return.contains(where: { (groupA) in
+                                                groupA.id == pieceX.groupNumber
+                                            }) {
+                                                
+                                                groups2Return.append(groupXXX)
+                                                
+//                                                print("Groups to return B = \(groups2Return.map({$0.id}))")
+                                                
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            break
+            
+//            break
+
+            
+        case .left:
+            
+            break
+
+            
+        case .right:
+            
+            break
+
+        default:
+            
+            
+            break
+            
+            
+        }
+        
+        for groupAA in groups2Return {
+            
+            for pieceAA in groupAA.pieces {
+                
+                
+                pieces2Return.append(pieceAA)
+                
+            }
+            
+        }
+        
+        
+        
+//        print(pieces2Return.map({$0.indexes}))
+        return pieces2Return
+        
+        
+    }
+    
+    func returnGroupHookGroups(group: Group, direction: Direction) -> [Int: [Int]] {
+        
+        //MARK: NEED TO MAKE SURE THAT THIS WORKS FOR LEFT & RIGHT
+        
+//        print("returnGroupHookPieces")
+        
+        var set2Return = [Int: [Int]]()
+        
+        
+        var currentGroupHookedPieces = [Piece]()
+        
+        var tempIntArray = [Int]()
+
+        switch direction {
+            
+        case .up:
+            
+            
+            for piece in group.pieces.sorted(by: { (piece1, piece2) in
+                piece1.indexes!.y! < piece2.indexes!.y!
+            }) {
+                
+
+                
+                //first check to see if there are pieces next to it, if there arent, skip
+                if group.pieces.contains(where: { piece3 in
+                    (piece3.indexes!.y! == piece.indexes!.y! && piece3.indexes!.x! < piece.indexes!.x!) || (piece3.indexes!.y! == piece.indexes!.y! && piece3.indexes!.x! > piece.indexes!.x!)
+                }) {
+                    
+                    //Now that we know that there is a piece next to it, lets see if there is a piece infront of it, otherwise its not a hook
+                    
+                    if group.pieces.contains(where: { piece3 in
+                        (piece3.indexes!.y! == piece.indexes!.y! - 1 && piece3.indexes!.x! == piece.indexes!.x!)
+                    }) {
+                        
+//                        print("There is a hook!")
+
+                        //Now need to save the "hook" pieces and see what pieces may be above them (these pieces would be the pieces with the same Y axis but different x axis's
+
+                        currentGroupHookedPieces = group.pieces.filter { piece1 in
+                            piece1.indexes!.y! == piece.indexes!.y! && piece1.indexes!.x! != piece.indexes!.x!
+                        }
+                        
+                        //Now need to add all pieces to the left and the right
+
+                        for pieceHook in currentGroupHookedPieces {
+                            
+//                            print("Piece Hook \(pieceHook.indexes)")
+                            
+                            for groupXXX in board.pieceGroups {
+                                
+                                if groupXXX.id != group.id {
+                                    
+                                    for pieceX in groupXXX.pieces {
+                                        
+                                        if pieceX.indexes == Indexes(x: pieceHook.indexes?.x, y: (pieceHook.indexes?.y)! - 1) {
+                                            
+                                            
+//                                            print("Group that is hooking = \(piece.groupNumber)")
+//
+//                                            print("Group that is hooked = \(pieceX.groupNumber)")
+                                            
+                                            if !tempIntArray.contains(where: { number in
+                                                number == pieceX.groupNumber
+                                            }) {
+                                                tempIntArray.append(pieceX.groupNumber)
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+//            print(blockeeAndBlockers)
+            
+            
+            //break
+            
+        case .down:
+            
+            for piece in group.pieces.sorted(by: { (piece1, piece2) in
+                piece1.indexes!.y! > piece2.indexes!.y! //CHANGE ARROW
+            }) {
+                
+                //first check to see if there are pieces next to it, if there arent, skip
+                if group.pieces.contains(where: { piece3 in
+                    (piece3.indexes!.y! == piece.indexes!.y! && piece3.indexes!.x! < piece.indexes!.x!) || (piece3.indexes!.y! == piece.indexes!.y! && piece3.indexes!.x! > piece.indexes!.x!) //LEFT ALONE
+                }) {
+                    
+                    //Now that we know that there is a piece next to it, lets see if there is a piece infront of it, otherwise its not a hook
+                    
+                    if group.pieces.contains(where: { piece3 in
+                        (piece3.indexes!.y! == piece.indexes!.y! + 1 && piece3.indexes!.x! == piece.indexes!.x!) //CHANGED TO PLUS ONE
+                    }) {
+                        
+//                        print("There is a hook!")
+
+                        //Now need to save the "hook" pieces and see what pieces may be above them (these pieces would be the pieces with the same Y axis but different x axis's
+
+                        currentGroupHookedPieces = group.pieces.filter { piece1 in
+                            piece1.indexes!.y! == piece.indexes!.y! && piece1.indexes!.x! != piece.indexes!.x!
+                        }
+                        
+                        //Now need to add all pieces to the left and the right
+
+                        for pieceHook in currentGroupHookedPieces {
+                            
+                            for groupXXX in board.pieceGroups {
+                                
+                                if groupXXX.id != group.id {
+                                    
+                                    for pieceX in groupXXX.pieces {
+                                        
+                                        if pieceX.indexes == Indexes(x: pieceHook.indexes?.x, y: (pieceHook.indexes?.y)! + 1) { //CHANGED TO PLUS
+                                            
+                                            
+//                                            print("Group that is hooking = \(piece.groupNumber)")
+//
+//                                            print("Group that is hooked = \(pieceX.groupNumber)")
+                                            
+                                            if !tempIntArray.contains(where: { number in
+                                                number == pieceX.groupNumber
+                                            }) {
+                                                tempIntArray.append(pieceX.groupNumber)
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+//            break
+            
+//            break
+
+            
+        case .left:
+            
+            for piece in group.pieces.sorted(by: { (piece1, piece2) in
+                piece1.indexes!.x! < piece2.indexes!.x!
+            }) {
+                
+
+                
+                //first check to see if there are pieces next to it, if there arent, skip
+                if group.pieces.contains(where: { piece3 in
+                    (piece3.indexes!.y! < piece.indexes!.y! && piece3.indexes!.x! == piece.indexes!.x!) || (piece3.indexes!.y! > piece.indexes!.y! && piece3.indexes!.x! == piece.indexes!.x!)
+                }) {
+                    
+                    //Now that we know that there is a piece next to it, lets see if there is a piece infront of it, otherwise its not a hook
+                    
+                    if group.pieces.contains(where: { piece3 in
+                        (piece3.indexes!.y! == piece.indexes!.y! && piece3.indexes!.x! == piece.indexes!.x! - 1)
+                    }) {
+                        
+//                        print("There is a hook!")
+
+                        //Now need to save the "hook" pieces and see what pieces may be above them (these pieces would be the pieces with the same Y axis but different x axis's
+
+                        currentGroupHookedPieces = group.pieces.filter { piece1 in
+                            piece1.indexes!.y! != piece.indexes!.y! && piece1.indexes!.x! == piece.indexes!.x!
+                        }
+                        
+                        //Now need to add all pieces to the left and the right
+
+                        for pieceHook in currentGroupHookedPieces {
+                            
+//                            print("Piece Hook \(pieceHook.indexes)")
+                            
+                            for groupXXX in board.pieceGroups {
+                                
+                                if groupXXX.id != group.id {
+                                    
+                                    for pieceX in groupXXX.pieces {
+                                        
+                                        if pieceX.indexes == Indexes(x: (pieceHook.indexes?.x)! - 1, y: (pieceHook.indexes?.y)!) {
+                                            
+                                            
+//                                            print("Group that is hooking = \(piece.groupNumber)")
+//
+//                                            print("Group that is hooked = \(pieceX.groupNumber)")
+                                            
+                                            if !tempIntArray.contains(where: { number in
+                                                number == pieceX.groupNumber
+                                            }) {
+                                                tempIntArray.append(pieceX.groupNumber)
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            
+//            break
+
+            
+        case .right:
+            
+            
+            for piece in group.pieces.sorted(by: { (piece1, piece2) in
+                piece1.indexes!.x! > piece2.indexes!.x! //CHANGE ARROW
+            }) {
+                
+                //first check to see if there are pieces next to it, if there arent, skip
+                if group.pieces.contains(where: { piece3 in
+                    (piece3.indexes!.y! < piece.indexes!.y! && piece3.indexes!.x! == piece.indexes!.x!) || (piece3.indexes!.y! < piece.indexes!.y! && piece3.indexes!.x! == piece.indexes!.x!) //LEFT ALONE
+                }) {
+                    
+                    //Now that we know that there is a piece next to it, lets see if there is a piece infront of it, otherwise its not a hook
+                    
+                    if group.pieces.contains(where: { piece3 in
+                        (piece3.indexes!.y! == piece.indexes!.y! && piece3.indexes!.x! == piece.indexes!.x! + 1) //CHANGED TO PLUS ONE
+                    }) {
+                        
+//                        print("There is a hook!")
+
+                        //Now need to save the "hook" pieces and see what pieces may be above them (these pieces would be the pieces with the same Y axis but different x axis's
+
+                        currentGroupHookedPieces = group.pieces.filter { piece1 in
+                            piece1.indexes!.y! != piece.indexes!.y! && piece1.indexes!.x! == piece.indexes!.x!
+                        }
+                        
+                        //Now need to add all pieces to the left and the right
+
+                        for pieceHook in currentGroupHookedPieces {
+                            
+                            for groupXXX in board.pieceGroups {
+                                
+                                if groupXXX.id != group.id {
+                                    
+                                    for pieceX in groupXXX.pieces {
+                                        
+                                        if pieceX.indexes == Indexes(x: (pieceHook.indexes?.x)! + 1, y: (pieceHook.indexes?.y)!) { //CHANGED TO PLUS
+                                            
+                                            
+//                                            print("Group that is hooking = \(piece.groupNumber)")
+//
+//                                            print("Group that is hooked = \(pieceX.groupNumber)")
+                                            
+                                            if !tempIntArray.contains(where: { number in
+                                                number == pieceX.groupNumber
+                                            }) {
+                                                tempIntArray.append(pieceX.groupNumber)
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            
+            
+            
+            
+//            break
+
+        default:
+            
+            
+            break
+            
+            
+        }
+        
+//        for groupAA in groups2Return {
+//
+//            for pieceAA in groupAA.pieces {
+//
+//
+//                set2Return.append(pieceAA)
+//
+//            }
+//
+//        }
+        
+//        set2Return[group.id] = tempIntArray
+
+//        print("set to return \(set2Return)")
+        
+        blockeeAndBlockers[group.id] = tempIntArray
+        
+        set2Return = blockeeAndBlockers
+        
+//        set2Return = blockeeAndBlockers
+//        print(pieces2Return.map({$0.indexes}))
+        return set2Return
+        
+        
+    }
+    
+    
+    
+    func groupPiecesTogetherX() {
+        
+        //MARK: SOMETHING ISNT RIGHT ABOUT THIS. AS OF RIGHT NOW THERE WAS A TIME THAT PIECES OF THE SAME COLOR DIDNT GROUP TOGETHER
+        
+        var pieces2Skip = [Piece]()
+
+        for group in board.pieceGroups{
+            
+//            print("Group ID = \(group.id)")
+            
+            for piece in group.pieces {
+                
+//                print("Skip contains \(pieces2Skip)")
+
+                
+                if pieces2Skip.contains(where: { (pieceX) in
+                    pieceX.indexes! == piece.indexes!
+                }) {
+                    
+//                    print("THIS IS TRUE - RETURNING")
+                    return
+                }
+                
+                let index1 = Indexes(x:piece.indexes?.x, y: (piece.indexes?.y)! - 1)
+                let index2 = Indexes(x:piece.indexes?.x, y: (piece.indexes?.y)! + 1)
+                let index3 = Indexes(x:(piece.indexes?.x)! - 1, y: piece.indexes?.y)
+                
+                let index4 = Indexes(x:(piece.indexes?.x)! + 1, y: piece.indexes?.y)
+                
+                
+                var indexes2Check = [index1, index2, index3, index4]
+                
+
+                indexes2Check.removeAll { (indexX) in
+                    indexX.x! < 0 || indexX.y! < 0 || indexX.x! > board.widthSpaces - 1 || indexX.y! > board.heightSpaces - 1
+                }
+                
+//                print(piece.indexes!)
+//                print(indexes2Check)
+//
+                
+                //UP TO HERE
+                
+                for indexX in indexes2Check {
+                    
+                    
+                    if group.pieces.contains(where: { (pieceX) in
+                        pieceX.indexes == indexX
+                    }) {
+                        break
+                    } else {
+                        
+                        for groupX in board.pieceGroups {
+                            
+                            if groupX.id != group.id {
+                                
+                                if groupX.pieces.contains(where: { (pieceXX) in
+                                    pieceXX.indexes == indexX && pieceXX.color == piece.color
+                                }) {
+//                                    print("These groups should be added together!")
+                                    
+                                    let groupIdToBeDeleted = groupX.id
+                                    
+//                                    delegate?.animateGrouping(piece: piece)
+                                    
+                                    for pieceXXX in groupX.pieces {
+                                        
+                                        group.pieces.append(pieceXXX)
+                                        pieceXXX.groupNumber = group.id
+                                        pieces2Skip.append(pieceXXX)
+                                        
+                                        
+                                    }
+                                    
+                                    for pieceXXXXX in group.pieces {
+                                        delegate?.animateGrouping(piece: pieceXXXXX)
+
+                                    }
+                                    
+                                    board.pieceGroups.removeAll { (group) in
+                                        group.id == groupIdToBeDeleted
+                                    }
+                                    
+                                    
+//                                    for groupXXXX in board.pieceGroups {
+//
+//                                        print("group.id = \(groupXXXX.id)")
+//
+//                                        for pieceXXXX in groupXXXX.pieces {
+//
+//                                            print("piece indexes = \(pieceXXXX.indexes)")
+//
+//                                        }
+//
+//
+//
+//                                    }
+                                    
+                                    
+                                    
+                                } else {
+//                                    print("This is False")
+                                }
+                                
+                            }
+                            
+                            
+                        }
+                        
+                        
+                        
+                        
+                    }
+                    
+                    
+                }
+
+                
+            }
+            
+            
+            
+        }
+        
+
+    }
+    
+    
+    
+//    func groupPiecesTogether() { //MARK: Need to change - When grouping 2 groups together, the group number should be the group that has more pieces
+//
+//        board.pieceGroups = []
+//
+//        let tempBoardPieces = board.pieces //TODO: May want to consider taking pieces out of here after they've been added to a group because of another piece
+//
+//
+//
+//
+////        tempBoardPieces.sort { (piece1, piece2) in
+////            piece1.indexes!.x! < piece2.indexes!.x!
+////        }
+////
+////        tempBoardPieces.sort { (piece1, piece2) in
+////            piece1.indexes!.y! < piece2.indexes!.y!
+////        }
+//
+//        for piece in tempBoardPieces.sorted(by: { (piece1, piece2) in
+//            piece1.indexes!.x! < piece2.indexes!.x!
+//        }).sorted(by: { piece1, piece2 in
+//            piece1.indexes!.y! < piece2.indexes!.y!
+//        }) {
+//
+//            for pieceX in board.pieces {
+//
+//                if piece.indexes!.y! == pieceX.indexes!.y! - 1 && piece.indexes!.x! == pieceX.indexes!.x! && piece.color == pieceX.color{
+//
+//                    if piece.groupNumber == nil && pieceX.groupNumber == nil {
+//
+//                        piece.groupNumber = groupCount + 1
+//                        pieceX.groupNumber = groupCount + 1
+//                        groupCount += 1
+//                        animation4GroupingPieces(pieces: [piece, pieceX])
+//
+//                    } else if pieceX.groupNumber != nil && piece.groupNumber == nil {
+//
+//                        piece.groupNumber = pieceX.groupNumber
+//                        animation4GroupingPieces(pieces: [piece, pieceX])
+//
+//                    } else if pieceX.groupNumber == nil && piece.groupNumber != nil {
+//
+//                        pieceX.groupNumber = piece.groupNumber
+//                        animation4GroupingPieces(pieces: [piece, pieceX])
+//
+//                    } else if pieceX.groupNumber != nil && piece.groupNumber != nil {
+//
+//                        if piece.groupNumber != pieceX.groupNumber {
+//
+//                            for pieceXX in board.pieces {
+//
+//                                if pieceXX.groupNumber == pieceX.groupNumber {
+//
+//                                    pieceX.groupNumber = piece.groupNumber
+//                                    animation4GroupingPieces(pieces: [piece, pieceX])
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                else if piece.indexes!.y! == pieceX.indexes!.y! && piece.indexes!.x! == pieceX.indexes!.x! - 1 && piece.color == pieceX.color{
+//
+//                    if piece.groupNumber == nil && pieceX.groupNumber == nil {
+//
+//                        piece.groupNumber = groupCount + 1
+//                        pieceX.groupNumber = groupCount + 1
+//                        groupCount += 1
+//                        animation4GroupingPieces(pieces: [piece, pieceX])
+//
+//                    } else if pieceX.groupNumber != nil && piece.groupNumber == nil {
+//
+//                        piece.groupNumber = pieceX.groupNumber
+//                        animation4GroupingPieces(pieces: [piece, pieceX])
+//
+//                    } else if pieceX.groupNumber == nil && piece.groupNumber != nil {
+//
+//                        pieceX.groupNumber = piece.groupNumber
+//                        animation4GroupingPieces(pieces: [piece, pieceX])
+//
+//                    } else if pieceX.groupNumber != nil && piece.groupNumber != nil {
+//
+//                        if piece.groupNumber != pieceX.groupNumber {
+//
+//                            for pieceXX in board.pieces {
+//
+//                                if pieceXX.groupNumber == pieceX.groupNumber {
+//
+//                                    pieceX.groupNumber = piece.groupNumber
+//                                    animation4GroupingPieces(pieces: [piece, pieceX])
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                else if piece.indexes!.y! == pieceX.indexes!.y! + 1 && piece.indexes!.x! == pieceX.indexes!.x! && piece.color == pieceX.color{
+//
+//                    if piece.groupNumber == nil && pieceX.groupNumber == nil {
+//
+//                        piece.groupNumber = groupCount + 1
+//                        pieceX.groupNumber = groupCount + 1
+//                        groupCount += 1
+//                        animation4GroupingPieces(pieces: [piece, pieceX])
+//
+//                    } else if pieceX.groupNumber != nil && piece.groupNumber == nil {
+//
+//                        piece.groupNumber = pieceX.groupNumber
+//                        animation4GroupingPieces(pieces: [piece, pieceX])
+//
+//                    } else if pieceX.groupNumber == nil && piece.groupNumber != nil {
+//
+//                        pieceX.groupNumber = piece.groupNumber
+//                        animation4GroupingPieces(pieces: [piece, pieceX])
+//
+//                    } else if pieceX.groupNumber != nil && piece.groupNumber != nil {
+//
+//                        if piece.groupNumber != pieceX.groupNumber {
+//
+//                            for pieceXX in board.pieces {
+//
+//                                if pieceXX.groupNumber == pieceX.groupNumber {
+//
+//                                    pieceX.groupNumber = piece.groupNumber
+//                                    animation4GroupingPieces(pieces: [piece, pieceX])
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//
+//                else if piece.indexes!.y! == pieceX.indexes!.y! && piece.indexes!.x! == pieceX.indexes!.x! + 1 && piece.color == pieceX.color{
+//
+//                    if piece.groupNumber == nil && pieceX.groupNumber == nil {
+//
+//                        piece.groupNumber = groupCount + 1
+//                        pieceX.groupNumber = groupCount + 1
+//                        groupCount += 1
+//                        animation4GroupingPieces(pieces: [piece, pieceX])
+//
+//                    } else if pieceX.groupNumber != nil && piece.groupNumber == nil {
+//
+//                        piece.groupNumber = pieceX.groupNumber
+//                        animation4GroupingPieces(pieces: [piece, pieceX])
+//
+//                    } else if pieceX.groupNumber == nil && piece.groupNumber != nil {
+//
+//                        pieceX.groupNumber = piece.groupNumber
+//                        animation4GroupingPieces(pieces: [piece, pieceX])
+//
+//                    } else if pieceX.groupNumber != nil && piece.groupNumber != nil {
+//
+//                        if piece.groupNumber != pieceX.groupNumber {
+//
+//                            for pieceXX in board.pieces {
+//
+//                                if pieceXX.groupNumber == pieceX.groupNumber {
+//
+//                                    pieceX.groupNumber = piece.groupNumber
+//                                    animation4GroupingPieces(pieces: [piece, pieceX])
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//
+//
+//            }
+//        }
+//
+//    }
+    
+    func updateLabels() {
+        
+//        print("update labels called")
+        
+        for group in board.pieceGroups {
+            
+            for piece in group.pieces {
+                
+                
+                piece.view.label.text = "\(group.pieces.count)"
+                
+                piece.view.label.text = "\(group.id)" //MARK: Take this out
+
+                
+                
+            }
+            
+            
+            
+        }
+        
+        
+        
+        
+    }
+    
+    func animation4GroupingPieces(pieces: [Piece]) {
+        
+        for piece in pieces {
+            
+            
+            UIView.animate(withDuration: 0.25) {
+
+                self.delegate?.enlargePiece(view: piece.view)
+
+            } completion: { (true) in
+
+                self.delegate?.shrinkPiece(view: piece.view)
+            }
+        }
+    }
+    
+//    func addBoardGroups() {
+//
+//        for number in 0..<groupCount {
+//
+//            var groupPieces = [Piece]()
+//
+//            for piece in board.pieces {
+//
+//                if let groupNum = piece.groupNumber {
+//
+//                    if groupNum == number + 1 {
+//
+//                        groupPieces.append(piece)
+//                    }
+//                }
+//            }
+//            let group = Group(pieces: groupPieces)
+//            group.number = number
+//            board.pieceGroups.append(group)
+//        }
+//    }
+
+//    func sortPieces(direction: Direction) {
+//
+//        switch direction {
+//
+//        case .up:
+//
+//            board.pieces.sort { (piece1, piece2) -> Bool in
+//                (piece1.indexes?.y!)! < (piece2.indexes?.y!)!
+//            }
+//
+//        case .down:
+//
+//            board.pieces.sort { (piece1, piece2) -> Bool in
+//                (piece1.indexes?.y!)! > (piece2.indexes?.y!)!
+//            }
+//
+//        case .left:
+//
+//            board.pieces.sort { (piece1, piece2) -> Bool in
+//                (piece1.indexes?.x!)! < (piece2.indexes?.x!)!
+//            }
+//
+//        case .right:
+//
+//            board.pieces.sort { (piece1, piece2) -> Bool in
+//                (piece1.indexes?.x!)! > (piece2.indexes?.x!)!
+//            }
+//
+//        default:
+//            break
+//        }
+//    }
+    
+    func sortGroups(direction: Direction) {
+        
+        switch direction {
+            
+        case .up:
+            
+            board.pieceGroups = board.pieceGroups.sorted(by: { (group1, group2) in
+                group1.pieces.map({($0.indexes?.y)!}).min()! < group2.pieces.map({($0.indexes?.y)!}).min()!
+            })
+
+        case .down:
+            
+            board.pieceGroups = board.pieceGroups.sorted(by: { (group1, group2) in
+                group1.pieces.map({($0.indexes?.y)!}).min()! > group2.pieces.map({($0.indexes?.y)!}).min()!
+            })
+            
+        case .left:
+            
+            board.pieceGroups = board.pieceGroups.sorted(by: { (group1, group2) in
+                group1.pieces.map({($0.indexes?.x)!}).min()! < group2.pieces.map({($0.indexes?.x)!}).min()!
+            })
+            
+        case .right:
+            
+            board.pieceGroups = board.pieceGroups.sorted(by: { (group1, group2) in
+                group1.pieces.map({($0.indexes?.x)!}).min()! > group2.pieces.map({($0.indexes?.x)!}).min()!
+            })
+
+        default:
+            break
+        }
+        
+//        print("sorted groups = \(board.pieceGroups.map({$0.id}))")
+
+    }
+    
+ 
+    func resetGame() {
+                
+//        for piece in board.pieces {
+//            delegate?.clearPiecesAnimation(view: piece.view)
+//        }
+//        board.pieces.removeAll()
+    }
+}

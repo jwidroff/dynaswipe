@@ -16,6 +16,13 @@
 		BAB7B9D72B33986700BE7E8F /* DynaSwipeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB7B9D62B33986700BE7E8F /* DynaSwipeTests.swift */; };
 		BAB7B9E12B33986700BE7E8F /* DynaSwipeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB7B9E02B33986700BE7E8F /* DynaSwipeUITests.swift */; };
 		BAB7B9E32B33986700BE7E8F /* DynaSwipeUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB7B9E22B33986700BE7E8F /* DynaSwipeUITestsLaunchTests.swift */; };
+		BAB7B9F02B3398AF00BE7E8F /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB7B9EF2B3398AF00BE7E8F /* Model.swift */; };
+		BAB7B9F22B3398C400BE7E8F /* ShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB7B9F12B3398C300BE7E8F /* ShapeView.swift */; };
+		BAB7B9F42B3398D400BE7E8F /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB7B9F32B3398D400BE7E8F /* MenuView.swift */; };
+		BAB7B9F62B3398EE00BE7E8F /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB7B9F52B3398EE00BE7E8F /* ColorTheme.swift */; };
+		BAB7B9F82B33990400BE7E8F /* Piece.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB7B9F72B33990400BE7E8F /* Piece.swift */; };
+		BAB7B9FA2B33991600BE7E8F /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB7B9F92B33991600BE7E8F /* Board.swift */; };
+		BAB7B9FC2B33992800BE7E8F /* GridPoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB7B9FB2B33992800BE7E8F /* GridPoints.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +56,13 @@
 		BAB7B9DC2B33986700BE7E8F /* DynaSwipeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DynaSwipeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAB7B9E02B33986700BE7E8F /* DynaSwipeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynaSwipeUITests.swift; sourceTree = "<group>"; };
 		BAB7B9E22B33986700BE7E8F /* DynaSwipeUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynaSwipeUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		BAB7B9EF2B3398AF00BE7E8F /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		BAB7B9F12B3398C300BE7E8F /* ShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeView.swift; sourceTree = "<group>"; };
+		BAB7B9F32B3398D400BE7E8F /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		BAB7B9F52B3398EE00BE7E8F /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
+		BAB7B9F72B33990400BE7E8F /* Piece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Piece.swift; sourceTree = "<group>"; };
+		BAB7B9F92B33991600BE7E8F /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		BAB7B9FB2B33992800BE7E8F /* GridPoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridPoints.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +116,13 @@
 				BAB7B9BF2B33986400BE7E8F /* AppDelegate.swift */,
 				BAB7B9C12B33986400BE7E8F /* SceneDelegate.swift */,
 				BAB7B9C32B33986400BE7E8F /* ViewController.swift */,
+				BAB7B9EF2B3398AF00BE7E8F /* Model.swift */,
+				BAB7B9F12B3398C300BE7E8F /* ShapeView.swift */,
+				BAB7B9F32B3398D400BE7E8F /* MenuView.swift */,
+				BAB7B9F52B3398EE00BE7E8F /* ColorTheme.swift */,
+				BAB7B9F72B33990400BE7E8F /* Piece.swift */,
+				BAB7B9F92B33991600BE7E8F /* Board.swift */,
+				BAB7B9FB2B33992800BE7E8F /* GridPoints.swift */,
 				BAB7B9C52B33986400BE7E8F /* Main.storyboard */,
 				BAB7B9C82B33986700BE7E8F /* Assets.xcassets */,
 				BAB7B9CA2B33986700BE7E8F /* LaunchScreen.storyboard */,
@@ -258,9 +279,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAB7B9F22B3398C400BE7E8F /* ShapeView.swift in Sources */,
+				BAB7B9F42B3398D400BE7E8F /* MenuView.swift in Sources */,
+				BAB7B9F62B3398EE00BE7E8F /* ColorTheme.swift in Sources */,
 				BAB7B9C42B33986400BE7E8F /* ViewController.swift in Sources */,
+				BAB7B9F82B33990400BE7E8F /* Piece.swift in Sources */,
 				BAB7B9C02B33986400BE7E8F /* AppDelegate.swift in Sources */,
 				BAB7B9C22B33986400BE7E8F /* SceneDelegate.swift in Sources */,
+				BAB7B9F02B3398AF00BE7E8F /* Model.swift in Sources */,
+				BAB7B9FC2B33992800BE7E8F /* GridPoints.swift in Sources */,
+				BAB7B9FA2B33991600BE7E8F /* Board.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
