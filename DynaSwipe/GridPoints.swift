@@ -16,6 +16,8 @@ class GridPoints {
     var dictionary = [Indexes: CGPoint]()
     var heightPoints = [CGFloat]()
     var widthPoints = [CGFloat]()
+    
+    
 
     init() {
         
@@ -77,11 +79,18 @@ class GridPoints {
                 let floatingPoint = CGPoint(x: horizontalSet.1, y: verticalSet.1)
                 
                 dictionary[Indexes(x: horizontalSet.0, y: verticalSet.0)] = floatingPoint
+                
+//                grid.locations.append(Indexes(x: horizontalSet.0, y: verticalSet.0))
             }
         }
+        
+//        print(grid.locations)
+        
         return dictionary
     }
 }
+
+
 
 struct Indexes {
     var x: Int?

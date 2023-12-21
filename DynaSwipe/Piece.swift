@@ -13,10 +13,13 @@ import UIKit
 class Piece {
     
     var indexes: Indexes?
+    var nextIndexes: Indexes?
     var view = ShapeView()
     var color = UIColor()
     var center = CGPoint()
     var groupNumber = Int()
+    var id = Int()
+    var canMoveOneSpace = true
 //    var groupNumber:Int?
 //    var textLabel = UILabel()
 
@@ -26,10 +29,17 @@ class Piece {
     
     init(indexes: Indexes?, color: UIColor) {
         
+        
+        
         self.indexes = indexes
         self.color = color
+        
+         
     }
 }
+
+
+
 
 class Group {
     

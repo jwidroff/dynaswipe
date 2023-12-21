@@ -15,13 +15,42 @@ class Board {
     
     var grid = [Indexes: CGPoint]()
     var view = UIView()
-//    var pieces = [Piece]()
+    var pieces = [Piece]()
     var heightSpaces = Int()
     var widthSpaces = Int()
     var colorTheme = ColorTheme()
 //    var instructions: Instructions?
     var pieceGroups = [Group]()
+    
+    var locationAndIDs = [Indexes: Int]()
+    var idsAndLocations = [Int: Indexes]()
+
+    
+//    func spaceIsOccupied(indexes: Indexes, id: Int) {
+//        
+//        for (indexX, idX) in locationAndIDs {
+//            
+//            if indexX == indexes {
+//                
+//                
+//                
+//                
+//                
+//                
+//                
+//            }
+//        }
+//    }
+    
+    
 }
+
+
+
+
+
+
+
 
 class BoardView : UIView {
     

@@ -52,6 +52,9 @@ class Model {
     let defaults = UserDefaults.standard
     var colors = PieceColors()
     var piecesMoved = false
+    
+    var piecesMovedX = false
+
     var red = PieceColors().colors["red"]!
     var blue = PieceColors().colors["blue"]!
     var green = PieceColors().colors["green"]!
@@ -63,6 +66,7 @@ class Model {
 //    var groups2Rerun = [[Group]]()
     var groups2Return = [Group]()
     var blockeeAndBlockers = [Int: [Int]]()
+    var highestID = 0
 
     
     init(){
@@ -72,6 +76,18 @@ class Model {
     func setUpGame() {
         
         setLevel()
+        
+        for group in board.pieceGroups {
+            
+            for piece in group.pieces {
+                
+//                print("piece.id \(piece.id)")
+            }
+            
+            
+        }
+        
+        
         setBoard()
     }
     
@@ -220,18 +236,46 @@ class Model {
         
         board.pieceGroups = [group1, group4, group5, group3, group2, group6]
         
+        var number = 0
         
         for group in board.pieceGroups {
             
             for piece in group.pieces {
                 
-                
+                piece.id = number
                 piece.groupNumber = group.id
+                board.pieces.append(piece)
+                number += 1
                 
             }
             
         }
+        
+        highestID = number
+        
+        
+        
+        updateBoard()
+        
 
+    }
+    
+    func updateBoard() {
+        
+        for group in board.pieceGroups {
+            
+            for piece in group.pieces {
+                
+                board.locationAndIDs[piece.indexes!] = piece.id
+                board.idsAndLocations[piece.id] = piece.indexes
+            }
+            
+        }
+        
+        
+//        print(board.locationAndIDs)
+        
+        
     }
     
     func setBoard() {
@@ -269,6 +313,15 @@ class Model {
 //            delegate?.setupInstructionsView(instructions: board.instructions!)
 //        }
 //    }
+    
+    func setPieceID(piece: Piece) {
+        
+        piece.id = highestID
+        
+        highestID += 1
+        
+//        print("PIECE ID = \(piece.id)")
+    }
     
     private func setPieceIndex(piece: Piece) {
 
@@ -726,15 +779,27 @@ class Model {
     
     func movePieces(direction: Direction) {
 
-        sortGroups(direction: direction)
+//        sortGroups(direction: direction)
+        
+        sortPieces(direction: direction)
 
-        moveGroups(direction: direction)
-        
-        
+//        moveGroups(direction: direction)
+        setPiecesMobility(direction: direction)
+        movePiecesThatShouldMove(direction: direction)
 //        let nextPiece = nextPiece
         
+       
+        groupPiecesTogetherX()
+        updateLabels()
+    }
+    
+    
+    func setNextPiece() {
+        
+        
         setPieceIndex(piece: nextPiece)
-//        board.pieces.append(nextPiece)
+        setPieceID(piece: nextPiece)
+        board.pieces.append(nextPiece)
         
         let group = Group(pieces: [nextPiece])
         group.id = board.pieceGroups.map({$0.id}).max()! + 1
@@ -742,9 +807,145 @@ class Model {
         board.pieceGroups.append(group)
         
         delegate?.addPieceView(piece: nextPiece)
-        groupPiecesTogetherX()
-        updateLabels()
+        
     }
+
+    
+    
+    
+    func setPiecesMobility(direction: Direction) {
+        
+        print("")
+        print("setPiecesMobility called")
+        
+        for piece in board.pieces {
+            
+            piece.canMoveOneSpace = true
+            
+            switch direction {
+                
+            case .up:
+                
+                if piece.indexes?.y! != 0 {
+                    
+                    piece.nextIndexes = Indexes(x: (piece.indexes?.x)!, y: (piece.indexes?.y)! - 1)
+                    piece.canMoveOneSpace = true
+                } else {
+                    piece.canMoveOneSpace = false
+                }
+                
+            case .down:
+                
+                if piece.indexes?.y! != board.heightSpaces - 1 {
+                    
+                    piece.nextIndexes = Indexes(x: (piece.indexes?.x)!, y: (piece.indexes?.y)! + 1)
+                    piece.canMoveOneSpace = true
+
+                } else {
+                    piece.canMoveOneSpace = false
+                }
+                
+            case .left:
+                
+                if piece.indexes?.x! != 0 {
+                    
+                    piece.nextIndexes = Indexes(x: (piece.indexes?.x)! - 1, y: (piece.indexes?.y)!)
+                    piece.canMoveOneSpace = true
+
+                } else {
+                    piece.canMoveOneSpace = false
+                }
+                
+            case .right:
+                
+                if piece.indexes?.x! != board.widthSpaces - 1 {
+                    
+                    piece.nextIndexes = Indexes(x: (piece.indexes?.x)! + 1, y: (piece.indexes?.y)!)
+                    piece.canMoveOneSpace = true
+
+                } else {
+                    piece.canMoveOneSpace = false
+                }
+                
+            default:
+                
+                break
+            }
+        }
+        
+        for piece in board.pieces {
+            
+            
+            if piece.nextIndexes != nil {
+                
+                if board.locationAndIDs[piece.nextIndexes!] == nil {
+                    
+                    print("spaces in front of \(piece.id) is empty")
+                                        
+                    
+                    if piece.canMoveOneSpace == true {
+                        
+                        board.locationAndIDs[piece.nextIndexes!] = piece.id
+                        board.locationAndIDs[piece.indexes!] = nil
+
+                        board.idsAndLocations[piece.id] = piece.nextIndexes!
+                        
+                        piece.indexes = piece.nextIndexes
+                        piece.nextIndexes = nil
+//                        piece.canMoveOneSpace = true
+                        
+                    }
+                    
+                    
+                } else {
+                    
+                    print("\(board.locationAndIDs[piece.nextIndexes!]) is not nil")
+                    
+                    piece.canMoveOneSpace = false
+                }
+                
+            }
+            
+
+        }
+    }
+    
+    
+    
+    func movePiecesThatShouldMove(direction: Direction) {
+        
+        
+        for piece in board.pieces {
+            
+            if piece.canMoveOneSpace == true {
+                
+                piecesMovedX = true
+                
+                delegate?.movePieceView(piece: piece)
+                
+//                piece.canMoveOneSpace = true
+            }
+            
+            
+            
+        }
+        
+//        if piecesMovedX == true {
+//
+//            piecesMovedX = false
+//            setPiecesMobility(direction: direction)
+//            movePiecesThatShouldMove(direction: direction)
+//
+//
+//
+//        }
+        
+        
+        
+    }
+    
+    
+    
     
     func groupCanMoveX(group: Group, direction: Direction) -> Bool {
         
@@ -1106,6 +1307,11 @@ class Model {
             
 //            sortGroups(direction: direction)
             moveGroups(direction: direction)
+            
+        } else {
+            
+            updateBoard()
+            
             
         }
     
@@ -2215,7 +2421,9 @@ class Model {
                 
                 piece.view.label.text = "\(group.pieces.count)"
                 
-                piece.view.label.text = "\(group.id)" //MARK: Take this out
+                piece.view.label.font = UIFont.boldSystemFont(ofSize: 8.0)
+                
+                piece.view.label.text = "\(piece.id)" //MARK: Take this out
 
                 
                 
@@ -2268,44 +2476,49 @@ class Model {
 //        }
 //    }
 
-//    func sortPieces(direction: Direction) {
-//
-//        switch direction {
-//
-//        case .up:
-//
-//            board.pieces.sort { (piece1, piece2) -> Bool in
-//                (piece1.indexes?.y!)! < (piece2.indexes?.y!)!
-//            }
-//
-//        case .down:
-//
-//            board.pieces.sort { (piece1, piece2) -> Bool in
-//                (piece1.indexes?.y!)! > (piece2.indexes?.y!)!
-//            }
-//
-//        case .left:
-//
-//            board.pieces.sort { (piece1, piece2) -> Bool in
-//                (piece1.indexes?.x!)! < (piece2.indexes?.x!)!
-//            }
-//
-//        case .right:
-//
-//            board.pieces.sort { (piece1, piece2) -> Bool in
-//                (piece1.indexes?.x!)! > (piece2.indexes?.x!)!
-//            }
-//
-//        default:
-//            break
-//        }
-//    }
+    func sortPieces(direction: Direction) {
+
+        switch direction {
+
+        case .up:
+
+            board.pieces.sort { (piece1, piece2) -> Bool in
+                (piece1.indexes?.y!)! < (piece2.indexes?.y!)!
+            }
+
+        case .down:
+
+            board.pieces.sort { (piece1, piece2) -> Bool in
+                (piece1.indexes?.y!)! > (piece2.indexes?.y!)!
+            }
+
+        case .left:
+
+            board.pieces.sort { (piece1, piece2) -> Bool in
+                (piece1.indexes?.x!)! < (piece2.indexes?.x!)!
+            }
+
+        case .right:
+
+            board.pieces.sort { (piece1, piece2) -> Bool in
+                (piece1.indexes?.x!)! > (piece2.indexes?.x!)!
+            }
+
+        default:
+            break
+        }
+        
+//        print(board.pieces.map({$0.indexes!}))
+        
+    }
     
     func sortGroups(direction: Direction) {
         
         switch direction {
             
         case .up:
+            
+            
             
             board.pieceGroups = board.pieceGroups.sorted(by: { (group1, group2) in
                 group1.pieces.map({($0.indexes?.y)!}).min()! < group2.pieces.map({($0.indexes?.y)!}).min()!
@@ -2314,7 +2527,7 @@ class Model {
         case .down:
             
             board.pieceGroups = board.pieceGroups.sorted(by: { (group1, group2) in
-                group1.pieces.map({($0.indexes?.y)!}).min()! > group2.pieces.map({($0.indexes?.y)!}).min()!
+                group1.pieces.map({($0.indexes?.y)!}).max()! < group2.pieces.map({($0.indexes?.y)!}).max()!
             })
             
         case .left:
