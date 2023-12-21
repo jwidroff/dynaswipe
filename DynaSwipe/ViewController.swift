@@ -215,20 +215,20 @@ class ViewController: UIViewController {
         switch sender.direction {
             
         case .up:
-            model.movePieces(direction: .up)
+            model.initiateMove(direction: .up)
 //            model.moveGroups(direction: .up)
         case .down:
-            model.movePieces (direction: .down)
+            model.initiateMove (direction: .down)
 //            model.moveGroups(direction: .down)
 
             
         case .right:
-            model.movePieces(direction: .right)
+            model.initiateMove(direction: .right)
 //            model.moveGroups(direction: .right)
 
             
         case .left:
-            model.movePieces(direction: .left)
+            model.initiateMove(direction: .left)
 //            model.moveGroups(direction: .left)
 
             

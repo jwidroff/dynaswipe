@@ -54,6 +54,7 @@ class Model {
     var piecesMoved = false
     
     var piecesMovedX = false
+    var groupsThatHaveMoved = [Int]()
 
     var red = PieceColors().colors["red"]!
     var blue = PieceColors().colors["blue"]!
@@ -77,18 +78,24 @@ class Model {
         
         setLevel()
         
-        for group in board.pieceGroups {
-            
-            for piece in group.pieces {
-                
-//                print("piece.id \(piece.id)")
-            }
-            
-            
-        }
+        
+//        for group in board.pieceGroups {
+//
+//            for piece in group.pieces {
+//
+////                print("piece.id \(piece.id)")
+//            }
+//
+//
+//        }
         
         
         setBoard()
+        
+        
+        groupPiecesTogetherX()
+
+        
     }
     
     func setUpControlsAndInstructions() {
@@ -777,21 +784,42 @@ class Model {
 //
 //    }
     
-    func movePieces(direction: Direction) {
+    func initiateMove(direction: Direction) {
 
 //        sortGroups(direction: direction)
         
         sortPieces(direction: direction)
 
 //        moveGroups(direction: direction)
-        setPiecesMobility(direction: direction)
-        movePiecesThatShouldMove(direction: direction)
+        movePieces(direction: direction)
 //        let nextPiece = nextPiece
         
-       setNextPiece()
+//       setNextPiece()
         groupPiecesTogetherX()
         updateLabels()
     }
+    
+
+    func movePieces(direction: Direction) {
+        
+        groupsThatHaveMoved = [Int]()
+
+        setPiecesMobility(direction: direction)
+        movePiecesThatShouldMove(direction: direction)
+        
+        
+        
+        
+        print("groupsThatHaveMoved = \(groupsThatHaveMoved)")
+        
+        if !groupsThatHaveMoved.isEmpty {
+            movePieces(direction: direction)
+        }
+        
+//        groupsThatHaveMoved = [Int]()
+        
+    }
+    
     
     
     func setNextPiece() {
@@ -894,6 +922,13 @@ class Model {
                         piece.nextIndexes = nil
 //                        piece.canMoveOneSpace = true
                         
+                        
+                        if !groupsThatHaveMoved.contains(where: { (int) in
+                            int == piece.groupNumber
+                        }) {
+                            groupsThatHaveMoved.append(piece.groupNumber)
+                        }
+                        
                     }
                     
                     
@@ -953,21 +988,17 @@ class Model {
                         piece.indexes = piece.previousIndex
                         piece.previousIndex = nil
                         
-                        
-                        
-                        
-                        
+                        groupsThatHaveMoved.removeAll { (int) in
+                            int == piece.groupNumber
+                        }
                     }
-                    
-                    
                 }
-                
-                
             }
-            
-            
-            
         }
+        
+        //MARK: NOW NEED TO CHECK THE LOCATION OF THE PIECES THAT MOVED BACK A SPACE. IT IS POSSIBLE THAT TWO PIECES ARE THERE. THEREFORE, NEED TO CHECK ONLY THE LOCATIONS OF THE SPACES THAT PIECES WERE MOVED BACK TO, IF THERE IS MORE THAN ONE PIECE IN THAT LOCATION, WE WILL NEED TO MOVE THE WRONG PIECE BACK
+        
+        
         
         
         
@@ -993,10 +1024,17 @@ class Model {
     
     func movePiecesThatShouldMove(direction: Direction) {
         
+        piecesMovedX = false
         
         for piece in board.pieces {
             
             if piece.canMoveOneSpace == true {
+                
+                
+                
+                print("THIS IS DOING SOMETHING")
+                
+                
                 
                 piecesMovedX = true
                 
@@ -1008,18 +1046,6 @@ class Model {
             
             
         }
-        
-//        if piecesMovedX == true {
-//
-//            piecesMovedX = false
-//            setPiecesMobility(direction: direction)
-//            movePiecesThatShouldMove(direction: direction)
-//
-//
-//
-//        }
-        
-        
         
     }
     
