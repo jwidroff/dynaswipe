@@ -788,7 +788,7 @@ class Model {
         movePiecesThatShouldMove(direction: direction)
 //        let nextPiece = nextPiece
         
-       
+       setNextPiece()
         groupPiecesTogetherX()
         updateLabels()
     }
@@ -889,7 +889,7 @@ class Model {
                         board.locationAndIDs[piece.indexes!] = nil
 
                         board.idsAndLocations[piece.id] = piece.nextIndexes!
-                        
+                        piece.previousIndex = piece.indexes
                         piece.indexes = piece.nextIndexes
                         piece.nextIndexes = nil
 //                        piece.canMoveOneSpace = true
@@ -908,6 +908,85 @@ class Model {
             
 
         }
+        
+        sortGroups(direction: direction)
+        
+        
+        for groupX in board.pieceGroups {
+            
+            print("Group \(groupX.id)")
+            
+            var trueX = Bool()
+            var falseX = Bool()
+            
+            for piece in groupX.pieces {
+                
+                print("Piece \(piece.id)")
+
+                if piece.canMoveOneSpace == true {
+                    print("True equals True")
+                    trueX = true
+                }
+                if piece.canMoveOneSpace == false {
+                    print("False equals True")
+
+                    falseX = true
+                }
+                
+            }
+            
+            if trueX == true && falseX == true {
+                
+                print("Its true that in one group a piece moved and a piece didnt move. Group number \(groupX.id)")
+                
+                for piece in groupX.pieces {
+                    
+                    if piece.canMoveOneSpace == true {
+                        
+                        //move it back
+                        
+                        board.locationAndIDs[piece.previousIndex!] = piece.id
+                        board.locationAndIDs[piece.indexes!] = nil
+
+                        board.idsAndLocations[piece.id] = piece.previousIndex!
+//                        piece.previousIndex = piece.indexes
+                        piece.indexes = piece.previousIndex
+                        piece.previousIndex = nil
+                        
+                        
+                        
+                        
+                        
+                    }
+                    
+                    
+                }
+                
+                
+            }
+            
+            
+            
+        }
+        
+        
+        
+//        for piece in board.pieces {
+//
+//            if piece.canMoveOneSpace == false {
+//
+//                for pieceX in returnGroup(groupNumber: piece.id).pieces {
+//
+//
+//
+//                }
+//
+//            }
+//
+//        }
+        
+        
+        
     }
     
     
