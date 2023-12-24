@@ -15,6 +15,7 @@ class Piece {
     var indexes: Indexes?
     var nextIndexes: Indexes?
     var previousIndex: Indexes?
+    var blockedByWall = false
     var view = ShapeView()
     var color = UIColor()
     var center = CGPoint()

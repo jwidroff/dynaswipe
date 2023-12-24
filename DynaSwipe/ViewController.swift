@@ -36,6 +36,7 @@ class ViewController: UIViewController {
         model.delegate = self
         model.board.view.removeFromSuperview()
         model.setUpGame()
+        model.updateLabels()
         model.setUpControlsAndInstructions()
     }
     
