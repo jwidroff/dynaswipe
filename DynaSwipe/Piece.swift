@@ -50,6 +50,7 @@ class Group {
     var didMove = false
     var colorBackground = UIColor()
     var id = Int()
+    var canMove = true
     
     init(pieces: [Piece]) {
         self.pieces = pieces

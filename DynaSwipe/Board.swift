@@ -25,6 +25,7 @@ class Board {
     var locationAndIDs = [Indexes: Int]()
     var idsAndLocations = [Int: Indexes]()
 
+    var indexArrayOfIntsDict = [Indexes: [Int]]()
     
 //    func spaceIsOccupied(indexes: Indexes, id: Int) {
 //        

@@ -91,11 +91,13 @@ class GridPoints {
 }
 
 
-
 struct Indexes {
     var x: Int?
     var y: Int?
 }
+
+
+
 
 extension Indexes: Hashable {
     
