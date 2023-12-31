@@ -161,26 +161,23 @@ class Model {
         group2.id = 2
         
         
+
+        let piece20 = Piece(indexes: Indexes(x: 5, y: 5), color: green)
+
         
-        let piece20 = Piece(indexes: Indexes(x: 1, y: 4), color: green)
-//        board.pieces.append(piece15)
-        
-        let piece21 = Piece(indexes: Indexes(x: 2, y: 3), color: green)
-        
-//        let piece2 = Piece(indexes: Indexes(x: 1, y: 3), color: red)
-        
-        let piece22 = Piece(indexes: Indexes(x: 5, y: 5), color: green)
-        
-        let piece23 = Piece(indexes: Indexes(x: 1, y: 3), color: green)
-        let piece24 = Piece(indexes: Indexes(x: 1, y: 5), color: green)
-        let piece25 = Piece(indexes: Indexes(x: 3, y: 3), color: green)
-        
-        
-        let group3 = Group(pieces: [piece22])//, piece21, piece20, piece23, piece24, piece25])
+        let group3 = Group(pieces: [piece20])//, piece21, piece20, piece23, piece24, piece25])
         
         
         group3.id = 3
         
+        
+        let piece70 = Piece(indexes: Indexes(x: 0, y: 2), color: green)
+
+        
+        let group7 = Group(pieces: [piece70])//, piece21, piece20, piece23, piece24, piece25])
+        
+        
+        group7.id = 7
         
         
         let piece30 = Piece(indexes: Indexes(x: 3, y: 5), color: orange)
@@ -243,7 +240,7 @@ class Model {
         
         
         
-        board.pieceGroups = [group1, group4, group5, group3, group2, group6]
+        board.pieceGroups = [group1, group4, group5, group3, group2, group6, group7]
         
         var number = 0
         
@@ -786,9 +783,19 @@ class Model {
 //
 //    }
     
+    func resetPieces() {
+        
+        for piece in board.pieces {
+            
+            
+            piece.canMoveOneSpace = true
+        }
+        
+    }
+    
     func initiateMove(direction: Direction) {
 
-//        sortGroups(direction: direction)
+        sortGroups(direction: direction)
         
         sortPieces(direction: direction)
 
@@ -798,6 +805,7 @@ class Model {
         
 //        printVisualDisplay(type: "pieceID")
 
+        resetPieces()
         
 //       setNextPiece()
         groupPiecesTogetherX()
@@ -2885,23 +2893,75 @@ class Model {
             
         case .up:
             
-        for piece in board.pieces {
-            print()
-        }
+            for piece in board.pieces {
+                
+                if piece.indexes?.y != 0 {
+                    
+                    
+                    piece.previousIndex = piece.indexes
+                    piece.nextIndexes = Indexes(x: (piece.indexes?.x!)! , y: (piece.indexes?.y)! - 1)
+                    
+                    
+                    if board.locationAndIDs[piece.nextIndexes!] == nil {
+                        board.locationAndIDs[piece.nextIndexes!] = piece.id
+                        board.locationAndIDs[piece.indexes!] = nil
+                    } else {
+
+                        piece.canMoveOneSpace = false
+
+                    }
+                    
+                }
+
+            }
         case .down:
             
-        for piece in board.pieces {
-            print()
+            for piece in board.pieces {
+                
+                if piece.indexes?.y != board.heightSpaces - 1 {
+                    
+                    
+                    piece.previousIndex = piece.indexes
+                    piece.nextIndexes = Indexes(x: (piece.indexes?.x!)! , y: (piece.indexes?.y)! + 1)
+                    
+                    
+                    if board.locationAndIDs[piece.nextIndexes!] == nil {
+                        board.locationAndIDs[piece.nextIndexes!] = piece.id
+                        board.locationAndIDs[piece.indexes!] = nil
+                    } else {
 
-        }
+                        piece.canMoveOneSpace = false
+
+                    }
+                    
+                }
+
+            }
             
         case .left:
             
 
-        for piece in board.pieces {
-            print()
+            for piece in board.pieces {
+                
+                if piece.indexes?.x != 0 {
+                    
+                    
+                    piece.previousIndex = piece.indexes
+                    piece.nextIndexes = Indexes(x: (piece.indexes?.x!)! - 1, y: piece.indexes?.y)
+                    
+                    
+                    if board.locationAndIDs[piece.nextIndexes!] == nil {
+                        board.locationAndIDs[piece.nextIndexes!] = piece.id
+                        board.locationAndIDs[piece.indexes!] = nil
+                    } else {
 
-        }
+                        piece.canMoveOneSpace = false
+
+                    }
+                    
+                }
+
+            }
             
         case .right:
 
@@ -2940,6 +3000,9 @@ class Model {
     }
     
     func checkForDuplicatesX(direction: Direction) {
+        
+        //MARK: May need to make this have recursion
+        
         
         for pieceX in board.pieces {
             
