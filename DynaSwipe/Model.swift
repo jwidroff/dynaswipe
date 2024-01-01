@@ -112,19 +112,19 @@ class Model {
         board.heightSpaces = 10
         board.widthSpaces = 10
         
-        let piece5 = Piece(indexes: Indexes(x: 1, y: 7), color: red)
+        let piece5 = Piece(indexes: Indexes(x: 0, y: 7), color: red)
         
         let piece1 = Piece(indexes: Indexes(x: 2, y: 6), color: red)
                 
         let piece3 = Piece(indexes: Indexes(x: 2, y: 8), color: red)
         
-        let piece4 = Piece(indexes: Indexes(x: 1, y: 6), color: red)
-        let piece6 = Piece(indexes: Indexes(x: 1, y: 8), color: red)
+        let piece4 = Piece(indexes: Indexes(x: 0, y: 6), color: red)
+        let piece6 = Piece(indexes: Indexes(x: 0, y: 8), color: red)
         let piece7 = Piece(indexes: Indexes(x: 3, y: 8), color: red)
         
-        let piece8 = Piece(indexes: Indexes(x: 1, y: 5), color: red)
+        let piece8 = Piece(indexes: Indexes(x: 0, y: 5), color: red)
 
-        let piece9 = Piece(indexes: Indexes(x: 1, y: 4), color: red)
+        let piece9 = Piece(indexes: Indexes(x: 0, y: 4), color: red)
 
         let piece99 = Piece(indexes: Indexes(x: 2, y: 4), color: red)
         
@@ -132,7 +132,14 @@ class Model {
         
         let piece97 = Piece(indexes: Indexes(x: 3, y: 7), color: red)
         
-        let group1 = Group(pieces: [piece5, piece1, piece3, piece4, piece6, piece7, piece8, piece9, piece99, piece98, piece97])
+        let piece96 = Piece(indexes: Indexes(x: 1, y: 4), color: red)
+        let piece95 = Piece(indexes: Indexes(x: 1, y: 6), color: red)
+        let piece94 = Piece(indexes: Indexes(x: 1, y: 8), color: red)
+        
+        
+        
+        
+        let group1 = Group(pieces: [piece5, piece1, piece3, piece4, piece6, piece7, piece8, piece9, piece99, piece98, piece97, piece96, piece95, piece94])
         
         
         group1.id = 1
@@ -171,13 +178,6 @@ class Model {
         group3.id = 3
         
         
-        let piece70 = Piece(indexes: Indexes(x: 2, y: 0), color: green)
-
-        
-        let group7 = Group(pieces: [piece70])//, piece21, piece20, piece23, piece24, piece25])
-        
-        
-        group7.id = 7
         
         
         let piece30 = Piece(indexes: Indexes(x: 3, y: 5), color: orange)
@@ -227,6 +227,22 @@ class Model {
         group6.id = 6
         
         
+        let piece70 = Piece(indexes: Indexes(x: 2, y: 0), color: green)
+
+        
+        let group7 = Group(pieces: [piece70])//, piece21, piece20, piece23, piece24, piece25])
+        
+        
+        group7.id = 7
+        
+        
+        let piece80 = Piece(indexes: Indexes(x: 1, y: 7), color: green)
+
+        
+        let group8 = Group(pieces: [piece80])//, piece21, piece20, piece23, piece24, piece25])
+        
+        
+        group8.id = 8
         
         
         
@@ -240,7 +256,7 @@ class Model {
         
         
         
-        board.pieceGroups = [group1, group4, group5, group3, group2, group6, group7]
+        board.pieceGroups = [group1, group4, group5, group3, group2, group6, group7, group8]
         
         var number = 0
         
@@ -791,6 +807,8 @@ class Model {
             piece.canMoveOneSpace = true
         }
         
+        addPiece = false
+        
     }
     
     func initiateMove(direction: Direction) {
@@ -805,9 +823,10 @@ class Model {
         
 //        printVisualDisplay(type: "pieceID")
 
-        resetPieces()
         
-//       setNextPiece()
+        
+       setNextPiece()
+        resetPieces()
         groupPiecesTogetherX()
         updateLabels()
         
@@ -845,21 +864,25 @@ class Model {
     
     func setNextPiece() {
         
+        if addPiece == true {
+            
+            setPieceIndex(piece: nextPiece)
+            setPieceID(piece: nextPiece)
+            board.pieces.append(nextPiece)
+            
+            let group = Group(pieces: [nextPiece])
+            group.id = board.pieceGroups.map({$0.id}).max()! + 1
+            nextPiece.groupNumber = group.id
+            board.pieceGroups.append(group)
+            
+            delegate?.addPieceView(piece: nextPiece)
+        }
         
-        setPieceIndex(piece: nextPiece)
-        setPieceID(piece: nextPiece)
-        board.pieces.append(nextPiece)
         
-        let group = Group(pieces: [nextPiece])
-        group.id = board.pieceGroups.map({$0.id}).max()! + 1
-        nextPiece.groupNumber = group.id
-        board.pieceGroups.append(group)
-        
-        delegate?.addPieceView(piece: nextPiece)
         
     }
 
-    
+    var addPiece = false
     
     
     func setPiecesMobility(direction: Direction) {
@@ -871,17 +894,37 @@ class Model {
 
 //        checkSpaceAhead(direction: direction)
         
-        checkGroup(direction: direction)
+
 
         checkForDuplicatesX(direction: direction)
 
-        
+        checkGroup(direction: direction)
+
+
         setIndexesX(direction: direction)
 
         
-        printVisualDisplay(type: "boardPieceID")
+        printVisualDisplay(type: "canMove")
+        
+//        var callAgain = false
+//
+//        for piece in board.pieces {
+//
+//            if piece.canMoveOneSpace == true {
+//
+//                callAgain = true
+//                addPiece = true
+//
+//            }
+//
+//        }
+//
+//        if callAgain == true {
+//
+//            setPiecesMobility(direction: direction)
+//        }
+        
 
-//        printVisualDisplay(type: "canMove")
         
     }
     
@@ -907,7 +950,11 @@ class Model {
                     print("Can Move")
                     
                     piece.indexes = piece.nextIndexes
+                    
+                    
                 } else {
+                    
+                    
                     
                     print("Cant Move")
                 }
@@ -968,6 +1015,7 @@ class Model {
                     piece.indexes = piece.nextIndexes
                 } else {
                     
+                    
                     print("Cant Move")
                 }
             }
@@ -979,12 +1027,102 @@ class Model {
             
         }
         
+        
+        
+        for pieceX in board.pieces {
+            
+            for pieceY in board.pieces {
+                
+                if pieceX.indexes == pieceY.indexes && pieceX.id != pieceY.id {
+                    
+                    
+                    switch direction {
+                        
+                    case .up:
+                        
+                        if (pieceX.nextIndexes?.y)! < (pieceY.nextIndexes?.y)! {
+                            
+                            pieceY.indexes = pieceY.previousIndex
+                            pieceY.canMoveOneSpace = false
+                        } else {
+                            
+                            pieceX.indexes = pieceX.previousIndex
+                            pieceX.canMoveOneSpace = false
+                        }
+                        
+                    case .down:
+                        
+                        if (pieceX.nextIndexes?.y)! > (pieceY.nextIndexes?.y)! {
+                            
+                            pieceY.indexes = pieceY.previousIndex
+                            pieceY.canMoveOneSpace = false
+                        } else {
+                            
+                            pieceX.indexes = pieceX.previousIndex
+                            pieceX.canMoveOneSpace = false
+                        }
+
+                        
+                    case .left:
+                        
+                        if (pieceX.nextIndexes?.x)! < (pieceY.nextIndexes?.x)! {
+                            
+                            pieceY.indexes = pieceY.previousIndex
+                            pieceY.canMoveOneSpace = false
+                        } else {
+                            
+                            pieceX.indexes = pieceX.previousIndex
+                            pieceX.canMoveOneSpace = false
+                        }
+
+                    case .right:
+                    
+                        if (pieceX.nextIndexes?.x)! > (pieceY.nextIndexes?.x)! {
+                            
+                            pieceY.indexes = pieceY.previousIndex
+                            pieceY.canMoveOneSpace = false
+                        } else {
+                            
+                            pieceX.indexes = pieceX.previousIndex
+                            pieceX.canMoveOneSpace = false
+                        }
+                        
+                        
+                    default:
+                        
+                        break
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    }
+                    
+                    
+                    
+                    print("PIECE X \(pieceX.id)")
+                    print("PIECE Y \(pieceY.id)")
+
+                    
+                }
+                
+            }
+            
+            
+        }
+        
+        
         board.locationAndIDs = [Indexes: Int]()
         
         for piece in board.pieces {
             
             board.locationAndIDs[piece.indexes!] = piece.id
         }
+        
+        
     }
     
 
@@ -1232,7 +1370,7 @@ class Model {
             
             if piece.canMoveOneSpace == true {
                 
-                piecesMovedX = true
+//                piecesMovedX = true
                 
                 delegate?.movePieceView(piece: piece)
                 
@@ -3056,24 +3194,31 @@ class Model {
         }
         
     }
+
+    
     
     func checkForDuplicatesX(direction: Direction) {
         
         //MARK: May need to make this have recursion
         
         
-        for pieceX in board.pieces {
-            
-            for pieceY in board.pieces {
-                
-                if pieceX.nextIndexes == pieceY.indexes && pieceX.id != pieceY.id && pieceY.canMoveOneSpace == false{
-                    
-                    if pieceX.canMoveOneSpace == true {
-                        pieceX.canMoveOneSpace = false
-                    }
-                }
-            }
-        }
+//        for pieceX in board.pieces {
+//
+//            for pieceY in board.pieces {
+//
+//                if pieceX.nextIndexes == pieceY.indexes && pieceX.id != pieceY.id && pieceY.canMoveOneSpace == false{
+//
+//                    if pieceX.canMoveOneSpace == true {
+//                        pieceX.canMoveOneSpace = false
+//
+//                        print("PIECE X is \(pieceX.id)")
+//
+//                        print("PIECE Y is \(pieceY.id)")
+//
+//                    }
+//                }
+//            }
+//        }
         
         for group in board.pieceGroups {
             
@@ -3185,7 +3330,11 @@ class Model {
     
     func checkGroup(direction: Direction) {
         
+        print("Check Group Called")
+        
         for group in board.pieceGroups {
+            
+            print("Group number \(group.id)")
             
             var canMove = true
             

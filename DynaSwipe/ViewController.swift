@@ -354,7 +354,7 @@ extension ViewController: ModelDelegate {
     
     func addPieceView(piece: Piece) {
 
-        UIView.animate(withDuration: 0.25, delay: 0.25, options: .curveEaseIn) {
+        UIView.animate(withDuration: 0.25, delay: 0.50, options: .curveEaseIn) {
 
             if let indexes = piece.indexes {
 
