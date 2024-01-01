@@ -171,7 +171,7 @@ class Model {
         group3.id = 3
         
         
-        let piece70 = Piece(indexes: Indexes(x: 0, y: 2), color: green)
+        let piece70 = Piece(indexes: Indexes(x: 2, y: 0), color: green)
 
         
         let group7 = Group(pieces: [piece70])//, piece21, piece20, piece23, piece24, piece25])
@@ -867,7 +867,7 @@ class Model {
         print("")
         print("setPiecesMobility called")
 
-        setIndexes(direction: direction) //Fix for other directions
+        setIndexes(direction: direction)
 
 //        checkSpaceAhead(direction: direction)
         
@@ -876,7 +876,7 @@ class Model {
         checkForDuplicatesX(direction: direction)
 
         
-        setIndexesX()
+        setIndexesX(direction: direction)
 
         
         printVisualDisplay(type: "boardPieceID")
@@ -885,46 +885,96 @@ class Model {
         
     }
     
-    func setIndexesX() {
+    func setIndexesX(direction: Direction) {
+        
+        
+        //MARK: NEED TO SET FOR ALL DIRECTIONS
         
         print("Set indexes called")
         
-        for piece in board.pieces.sorted(by: { (piece1, piece2) in
-            (piece1.indexes?.x!)! < (piece2.indexes?.x!)!
-        }) {
+        switch direction {
             
-            print("piece with piece ID of \(piece.id)")
+        case .up:
             
-            if piece.canMoveOneSpace == true {
+            for piece in board.pieces.sorted(by: { (piece1, piece2) in
+                (piece1.indexes?.y!)! < (piece2.indexes?.y!)!
+            }) {
                 
-                print("Can Move")
-
+                print("piece with piece ID of \(piece.id)")
                 
-                piece.indexes = piece.nextIndexes
-            } else {
-                
-                print("Cant Move")
-
-                
-//                if board.locationAndIDs[piece.nextIndexes!] == piece.id {
-//
-//                    print(board.locationAndIDs[piece.previousIndex!])
-//                    print(board.locationAndIDs[piece.nextIndexes!])
-//
-//                    piece.indexes = piece.previousIndex
-//
-//
-////                    if board.locationAndIDs[piece.previousIndex!] == board.locationAndIDs[piece.nextIndexes!] {
-////                        board.locationAndIDs[piece.nextIndexes!] = nil
-////
-////                    }
-//
-//                }
-                
+                if piece.canMoveOneSpace == true {
+                    
+                    print("Can Move")
+                    
+                    piece.indexes = piece.nextIndexes
+                } else {
+                    
+                    print("Cant Move")
+                }
             }
-//
-//            board.locationAndIDs[piece.indexes!] = piece.id
-
+            
+        case .down:
+            
+            for piece in board.pieces.sorted(by: { (piece1, piece2) in
+                (piece1.indexes?.y!)! > (piece2.indexes?.y!)!
+            }) {
+                
+                print("piece with piece ID of \(piece.id)")
+                
+                if piece.canMoveOneSpace == true {
+                    
+                    print("Can Move")
+                    
+                    piece.indexes = piece.nextIndexes
+                } else {
+                    
+                    print("Cant Move")
+                }
+            }
+            
+            
+        case .left:
+            
+            for piece in board.pieces.sorted(by: { (piece1, piece2) in
+                (piece1.indexes?.x!)! < (piece2.indexes?.x!)!
+            }) {
+                
+                print("piece with piece ID of \(piece.id)")
+                
+                if piece.canMoveOneSpace == true {
+                    
+                    print("Can Move")
+                    
+                    piece.indexes = piece.nextIndexes
+                } else {
+                    
+                    print("Cant Move")
+                }
+            }
+            
+            
+        case .right:
+            
+            for piece in board.pieces.sorted(by: { (piece1, piece2) in
+                (piece1.indexes?.x!)! > (piece2.indexes?.x!)!
+            }) {
+                
+                print("piece with piece ID of \(piece.id)")
+                
+                if piece.canMoveOneSpace == true {
+                    
+                    print("Can Move")
+                    
+                    piece.indexes = piece.nextIndexes
+                } else {
+                    
+                    print("Cant Move")
+                }
+            }
+            
+        default:
+            
+            break
             
             
         }
@@ -2911,6 +2961,8 @@ class Model {
 
                     }
                     
+                } else {
+                    piece.canMoveOneSpace = false
                 }
 
             }
@@ -2934,6 +2986,8 @@ class Model {
 
                     }
                     
+                }  else {
+                    piece.canMoveOneSpace = false
                 }
 
             }
@@ -2959,6 +3013,8 @@ class Model {
 
                     }
                     
+                }  else {
+                    piece.canMoveOneSpace = false
                 }
 
             }
@@ -2984,6 +3040,8 @@ class Model {
 
                 }
                 
+            } else {
+                piece.canMoveOneSpace = false
             }
 
         }
