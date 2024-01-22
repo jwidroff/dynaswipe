@@ -23,7 +23,7 @@ class Board {
     var pieceGroups = [Group]()
     
     var locationAndIDs = [Indexes: Int]()
-    var idsAndLocations = [Int: Indexes]()
+//    var idsAndLocations = [Int: Indexes]()
 
     var indexArrayOfIntsDict = [Indexes: [Int]]()
     
