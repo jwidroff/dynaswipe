@@ -284,6 +284,9 @@ class Model {
     
     func updateBoard() {
         
+        board.idsAndLocations.removeAll()
+        board.locationAndIDs.removeAll()
+        
         for group in board.pieceGroups {
             
             for piece in group.pieces {
@@ -831,7 +834,8 @@ class Model {
         updateLabels()
         
         
-        
+//        printVisualDisplay(type: "pieceID")
+
     }
     
 
@@ -839,13 +843,18 @@ class Model {
         
 //        groupsThatHaveMoved = [Int]()
 
-        setPiecesMobility(direction: direction)
+        setPieceCanMove(direction: direction)
+        
+
         
         
         movePiecesThatShouldMove(direction: direction)
         
         
-        
+//        printVisualDisplay(type: "canMove")
+
+        printVisualDisplay(type: "pieceID")
+
         
 //        print("groupsThatHaveMoved = \(groupsThatHaveMoved)")
 //
@@ -885,10 +894,10 @@ class Model {
     var addPiece = false
     
     
-    func setPiecesMobility(direction: Direction) {
+    func setPieceCanMove(direction: Direction) {
         
-        print("")
-        print("setPiecesMobility called")
+//        print("")
+//        print("setPiecesMobility called")
 
         setIndexes(direction: direction)
 
@@ -896,15 +905,26 @@ class Model {
         
 
 
-        checkForDuplicatesX(direction: direction)
 
         checkGroup(direction: direction)
-
-
+        
+        
         setIndexesX(direction: direction)
 
+
+        checkForDuplicatesX(direction: direction)
+
+
         
-        printVisualDisplay(type: "canMove")
+        updateBoard()
+
+//        for piece in board.pieces {
+//
+//            board.locationAndIDs[piece.indexes!] = piece.id
+//            board.idsAndLocations[piece.id] = piece.indexes
+//        }
+
+//        printVisualDisplay(type: "pieceID")
         
 //        var callAgain = false
 //
@@ -933,7 +953,7 @@ class Model {
         
         //MARK: NEED TO SET FOR ALL DIRECTIONS
         
-        print("Set indexes called")
+//        print("Set indexes called")
         
         switch direction {
             
@@ -943,11 +963,11 @@ class Model {
                 (piece1.indexes?.y!)! < (piece2.indexes?.y!)!
             }) {
                 
-                print("piece with piece ID of \(piece.id)")
+//                print("piece with piece ID of \(piece.id)")
                 
                 if piece.canMoveOneSpace == true {
                     
-                    print("Can Move")
+//                    print("Can Move")
                     
                     piece.indexes = piece.nextIndexes
                     
@@ -956,7 +976,7 @@ class Model {
                     
                     
                     
-                    print("Cant Move")
+//                    print("Cant Move")
                 }
             }
             
@@ -966,16 +986,16 @@ class Model {
                 (piece1.indexes?.y!)! > (piece2.indexes?.y!)!
             }) {
                 
-                print("piece with piece ID of \(piece.id)")
+//                print("piece with piece ID of \(piece.id)")
                 
                 if piece.canMoveOneSpace == true {
                     
-                    print("Can Move")
+//                    print("Can Move")
                     
                     piece.indexes = piece.nextIndexes
                 } else {
                     
-                    print("Cant Move")
+//                    print("Cant Move")
                 }
             }
             
@@ -986,16 +1006,16 @@ class Model {
                 (piece1.indexes?.x!)! < (piece2.indexes?.x!)!
             }) {
                 
-                print("piece with piece ID of \(piece.id)")
+//                print("piece with piece ID of \(piece.id)")
                 
                 if piece.canMoveOneSpace == true {
                     
-                    print("Can Move")
+//                    print("Can Move")
                     
                     piece.indexes = piece.nextIndexes
                 } else {
                     
-                    print("Cant Move")
+//                    print("Cant Move")
                 }
             }
             
@@ -1006,17 +1026,17 @@ class Model {
                 (piece1.indexes?.x!)! > (piece2.indexes?.x!)!
             }) {
                 
-                print("piece with piece ID of \(piece.id)")
+//                print("piece with piece ID of \(piece.id)")
                 
                 if piece.canMoveOneSpace == true {
                     
-                    print("Can Move")
+//                     print("Can Move")
                     
                     piece.indexes = piece.nextIndexes
                 } else {
                     
                     
-                    print("Cant Move")
+//                    print("Cant Move")
                 }
             }
             
@@ -1030,97 +1050,99 @@ class Model {
         
         
         for pieceX in board.pieces {
-            
+
             for pieceY in board.pieces {
-                
+
                 if pieceX.indexes == pieceY.indexes && pieceX.id != pieceY.id {
-                    
-                    
+
+
                     switch direction {
-                        
+
                     case .up:
-                        
+
                         if (pieceX.nextIndexes?.y)! < (pieceY.nextIndexes?.y)! {
-                            
+
                             pieceY.indexes = pieceY.previousIndex
                             pieceY.canMoveOneSpace = false
                         } else {
-                            
-                            pieceX.indexes = pieceX.previousIndex
-                            pieceX.canMoveOneSpace = false
-                        }
-                        
-                    case .down:
-                        
-                        if (pieceX.nextIndexes?.y)! > (pieceY.nextIndexes?.y)! {
-                            
-                            pieceY.indexes = pieceY.previousIndex
-                            pieceY.canMoveOneSpace = false
-                        } else {
-                            
+
                             pieceX.indexes = pieceX.previousIndex
                             pieceX.canMoveOneSpace = false
                         }
 
-                        
-                    case .left:
-                        
-                        if (pieceX.nextIndexes?.x)! < (pieceY.nextIndexes?.x)! {
-                            
+                    case .down:
+
+                        if (pieceX.nextIndexes?.y)! > (pieceY.nextIndexes?.y)! {
+
                             pieceY.indexes = pieceY.previousIndex
                             pieceY.canMoveOneSpace = false
                         } else {
-                            
+
+                            pieceX.indexes = pieceX.previousIndex
+                            pieceX.canMoveOneSpace = false
+                        }
+
+
+                    case .left:
+
+                        if (pieceX.nextIndexes?.x)! < (pieceY.nextIndexes?.x)! {
+
+                            pieceY.indexes = pieceY.previousIndex
+                            pieceY.canMoveOneSpace = false
+                        } else {
+
                             pieceX.indexes = pieceX.previousIndex
                             pieceX.canMoveOneSpace = false
                         }
 
                     case .right:
-                    
+
                         if (pieceX.nextIndexes?.x)! > (pieceY.nextIndexes?.x)! {
-                            
+
                             pieceY.indexes = pieceY.previousIndex
                             pieceY.canMoveOneSpace = false
                         } else {
-                            
+
                             pieceX.indexes = pieceX.previousIndex
                             pieceX.canMoveOneSpace = false
                         }
-                        
-                        
-                    default:
-                        
-                        break
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                    }
-                    
-                    
-                    
-                    print("PIECE X \(pieceX.id)")
-                    print("PIECE Y \(pieceY.id)")
 
-                    
+
+                    default:
+
+                        break
+
+
+
+
+
+
+
+
+                    }
+
+
+
+//                    print("PIECE X \(pieceX.id)")
+//                    print("PIECE Y \(pieceY.id)")
+
+
                 }
-                
+
             }
-            
-            
+
+
         }
         
         
-        board.locationAndIDs = [Indexes: Int]()
+//        board.locationAndIDs = [Indexes: Int]()
         
-        for piece in board.pieces {
-            
-            board.locationAndIDs[piece.indexes!] = piece.id
-        }
+        updateBoard()
+        
+//        for piece in board.pieces {
+//
+//            board.locationAndIDs[piece.indexes!] = piece.id
+//        }
         
         
     }
@@ -1726,7 +1748,7 @@ class Model {
             }
         }
         
-        print("masterGroupOfGroupsX \(masterGroupOfGroupsX)")
+//        print("masterGroupOfGroupsX \(masterGroupOfGroupsX)")
         
         
         
@@ -3100,6 +3122,8 @@ class Model {
                     }
                     
                 } else {
+                    piece.previousIndex = piece.indexes
+                    piece.nextIndexes = piece.indexes
                     piece.canMoveOneSpace = false
                 }
 
@@ -3125,6 +3149,8 @@ class Model {
                     }
                     
                 }  else {
+                    piece.previousIndex = piece.indexes
+                    piece.nextIndexes = piece.indexes
                     piece.canMoveOneSpace = false
                 }
 
@@ -3152,6 +3178,8 @@ class Model {
                     }
                     
                 }  else {
+                    piece.previousIndex = piece.indexes
+                    piece.nextIndexes = piece.indexes
                     piece.canMoveOneSpace = false
                 }
 
@@ -3179,6 +3207,8 @@ class Model {
                 }
                 
             } else {
+                piece.previousIndex = piece.indexes
+                piece.nextIndexes = piece.indexes
                 piece.canMoveOneSpace = false
             }
 
@@ -3198,6 +3228,8 @@ class Model {
     
     
     func checkForDuplicatesX(direction: Direction) {
+        
+
         
         //MARK: May need to make this have recursion
         
@@ -3222,12 +3254,19 @@ class Model {
         
         for group in board.pieceGroups {
             
+//            print("REGARDING GROUP \(group.id)")
+            
             var groupCanMove = true
             
             for pieceX in group.pieces {
                 
                 if pieceX.canMoveOneSpace == false {
+                    
+//                    print("Piece with ID \(pieceX.id) cant move and therefore all pieces in this group wont move")
+
+                    
                     groupCanMove = false
+                    
                 }
                 
             }
@@ -3236,7 +3275,23 @@ class Model {
                 
                 for piece in group.pieces {
                     
+                    
+                    
+                    
                     piece.canMoveOneSpace = false
+                    
+//                    print("Piece \(piece.id) canMoveOneSpace = \(piece.canMoveOneSpace)")
+                    
+ 
+                    
+                    
+                    if piece.indexes == piece.nextIndexes {
+                        piece.indexes = piece.previousIndex
+                    }
+                    
+
+                    
+                    
                 }
                 
             }
@@ -3259,11 +3314,11 @@ class Model {
 
                 if pieceQ.nextIndexes == piece.indexes && pieceQ.id != piece.id {
 
-                    print("We have 2 pieces in \(piece.indexes)")
-                    print("the correct piece to be here is \(board.locationAndIDs[piece.indexes!])")
-
-                    print("We have 2 pieces in \(pieceQ.indexes)")
-                    print("the correct piece to be here is \(board.locationAndIDs[pieceQ.nextIndexes!])")
+//                    print("We have 2 pieces in \(piece.indexes)")
+//                    print("the correct piece to be here is \(board.locationAndIDs[piece.indexes!])")
+//
+//                    print("We have 2 pieces in \(pieceQ.indexes)")
+//                    print("the correct piece to be here is \(board.locationAndIDs[pieceQ.nextIndexes!])")
 
 
                     if board.locationAndIDs[piece.nextIndexes!] == piece.id {
@@ -3273,12 +3328,12 @@ class Model {
                             if pieceR.indexes == piece.indexes && pieceR.id != piece.id {
 
                                 for pieceG in returnGroup(groupNumber: pieceR.groupNumber).pieces {
-                                    print("A")
-                                    print(pieceG.canMoveOneSpace)
-                                    print(pieceG.id)
-                                    print(pieceG.previousIndex)
-                                    print(pieceG.indexes)
-                                    print(pieceG.nextIndexes)
+//                                    print("A")
+//                                    print(pieceG.canMoveOneSpace)
+//                                    print(pieceG.id)
+//                                    print(pieceG.previousIndex)
+//                                    print(pieceG.indexes)
+//                                    print(pieceG.nextIndexes)
 
                                     pieceG.indexes = pieceG.previousIndex
 
@@ -3298,13 +3353,13 @@ class Model {
                     } else {
 
                         for pieceW in returnGroup(groupNumber: piece.groupNumber).pieces {
-                            print("B")
-                            print(pieceW.canMoveOneSpace)
+//                            print("B")
+//                            print(pieceW.canMoveOneSpace)
 
-                            print(pieceW.id)
-                            print(pieceW.previousIndex)
-                            print(pieceW.indexes)
-                            print(pieceW.nextIndexes)
+//                            print(pieceW.id)
+//                            print(pieceW.previousIndex)
+//                            print(pieceW.indexes)
+//                            print(pieceW.nextIndexes)
 
 
 
@@ -3330,36 +3385,36 @@ class Model {
     
     func checkGroup(direction: Direction) {
         
-        print("Check Group Called")
+//        print("Check Group Called")
         
         for group in board.pieceGroups {
             
-            print("Group number \(group.id)")
+//            print("Group number \(group.id)")
             
             var canMove = true
             
             for piece in group.pieces {
                 
                 if piece.canMoveOneSpace == false {
-                    
-                    canMove = false
-                    
-                    
-                    
-                }
+                                    
+                                    canMove = false
+                                    
+                                    
+                                    
+                                }
             }
             
             if canMove == true {
                 
                 for pieceX in group.pieces {
                     
-                    print("\(pieceX.id) was \(pieceX.indexes)")
+//                    print("\(pieceX.id) was \(pieceX.indexes)")
                     
                     
                     //MARK: Uncomment to not have pieces slide like before
 //                    pieceX.indexes = pieceX.nextIndexes
                     
-                    print("\(pieceX.id) is now \(pieceX.indexes)")
+//                    print("\(pieceX.id) is now \(pieceX.indexes)")
 
 //                    pieceX.canMoveOneSpace = true
                 }
@@ -3383,14 +3438,14 @@ class Model {
                 
                 if board.locationAndIDs[piece.nextIndexes!] == piece.id {
                     
-                    print("Piece \(piece.id) is able to move because the piece in front is its ID")
+//                    print("Piece \(piece.id) is able to move because the piece in front is its ID")
                     
 //                    piece.indexes = piece.nextIndexes
 //                    piece.canMoveOneSpace = true
                     
                 } else {
                     
-                    print("Piece \(piece.id) is not able to move because the piece in front is not its ID")
+//                    print("Piece \(piece.id) is not able to move because the piece in front is not its ID")
                     
                     for piece in returnGroup(groupNumber: piece.groupNumber).pieces {
                         
@@ -3423,13 +3478,13 @@ class Model {
         }) {
             if board.locationAndIDs[piece.nextIndexes!] == piece.id {
                 
-                print("ITS TRUE")
+//                print("ITS TRUE")
                 
 //                piece.canMoveOneSpace = true
 //                piece.indexes = piece.nextIndexes
                 
             } else {
-                print("ITS NOT TRUE")
+//                print("ITS NOT TRUE")
 
                 piece.canMoveOneSpace = false
 //                piece.indexes = piece.previousIndex
@@ -3513,9 +3568,9 @@ class Model {
     
     func checkIfGroupCanMove(direction: Direction) {
         
-        print("")
-
-        print("Here We Go")
+//        print("")
+//
+//        print("Here We Go")
         
         
         
@@ -3531,22 +3586,22 @@ class Model {
                 (piece1.indexes?.y!)! < (piece2.indexes?.y!)!
             }) {
                 
-                print("PIECE ID = \(piece.id)")
-                print("PIECE prev Index = \(piece.previousIndex)")
-                print("PIECE Current Index = \(piece.indexes)")
-                print("PIECE next Index = \(piece.nextIndexes)")
+//                print("PIECE ID = \(piece.id)")
+//                print("PIECE prev Index = \(piece.previousIndex)")
+//                print("PIECE Current Index = \(piece.indexes)")
+//                print("PIECE next Index = \(piece.nextIndexes)")
 
                 
                 if piece.canMoveOneSpace == true {
                     
                     if board.locationAndIDs[piece.nextIndexes!] == nil {
                         
-                        print("Board does not show anything infront")
+//                        print("Board does not show anything infront")
 
                         
 //                        if piece.canMoveOneSpace == true {
                             
-                            print("Since there is not a wall infront of the piece, we will move it one")
+//                            print("Since there is not a wall infront of the piece, we will move it one")
                             
                             
                             
@@ -3566,6 +3621,8 @@ class Model {
 //                        }
                         
                     } else {
+                        
+                        
                         
                         board.locationAndIDs[piece.indexes!] = piece.id
                         
@@ -3759,7 +3816,7 @@ class Model {
     
     func stopGroupIfAllPiecesCantMoveX(direction: Direction) {
         
-        print("Groups that have moved \(groupsThatHaveMoved)")
+//        print("Groups that have moved \(groupsThatHaveMoved)")
         
         
         for groupX in board.pieceGroups {
@@ -3786,7 +3843,7 @@ class Model {
                 
                 for piece in groupX.pieces {
                     
-                    print("Can Move piece.id = \(piece.id)")
+//                    print("Can Move piece.id = \(piece.id)")
                     
                     if piece.canMoveOneSpace {
                         
@@ -3816,7 +3873,7 @@ class Model {
 //                print("Cant Move piece.id = \(piece.id)")
 
                 for piece in groupX.pieces {
-                    print("Addiing \(piece.id)")
+//                    print("Addiing \(piece.id)")
                     piecesToMoveBack.append(piece.id)
                 }
             }
@@ -3840,14 +3897,14 @@ class Model {
                 
                 for piece in groupX.pieces {
                     
-                                        print("Piece \(piece.id)")
+//                                        print("Piece \(piece.id)")
                     
                     if piece.canMoveOneSpace == true {
-                                                print("True equals True")
+//                                                print("True equals True")
                         trueX = true
                     }
                     if piece.canMoveOneSpace == false {
-                                                print("False equals True")
+//                                                print("False equals True")
                         
                         falseX = true
                     }
@@ -3856,7 +3913,7 @@ class Model {
                 
                 if trueX == true && falseX == true {
                     
-                    print("Its true that in one group a piece moved and a piece didnt move. Group number \(groupX.id)")
+//                    print("Its true that in one group a piece moved and a piece didnt move. Group number \(groupX.id)")
                     
                     
                     
@@ -3871,7 +3928,7 @@ class Model {
                             (piece1.indexes?.y!)! > (piece2.indexes?.y!)!
                         }) {
                             
-                            print("PIECE NUMBER = \(piece.id)")
+//                            print("PIECE NUMBER = \(piece.id)")
                             
                             if piece.canMoveOneSpace == true {
                                 
@@ -3902,7 +3959,7 @@ class Model {
 
                                 //MARK: STILL NEED TO SET THE LOCATIONS THAT THE PIECES ARE IN EVENTHOUGH THEY
 
-                                print("HERE IS AN ISSUE")
+//                                print("HERE IS AN ISSUE")
 
                             }
                         }
@@ -4071,10 +4128,10 @@ class Model {
                     
                     if board.locationAndIDs[piece.indexes!] != piece.id {
                         
-                        print("WE NEED TO MOVE PIECE \(piece.id) BACK")
-                        print("Piece NextIndexes \(piece.nextIndexes)")
-                        print("Piece Indexes \(piece.indexes)")
-                        print("Piece PrevIndexes \(piece.previousIndex)")
+//                        print("WE NEED TO MOVE PIECE \(piece.id) BACK")
+//                        print("Piece NextIndexes \(piece.nextIndexes)")
+//                        print("Piece Indexes \(piece.indexes)")
+//                        print("Piece PrevIndexes \(piece.previousIndex)")
                         
                         piece.canMoveOneSpace = true
 //                        piece.indexes = Indexes(x: (piece.indexes?.x!)! - 1, y: piece.indexes?.y!)
@@ -4116,8 +4173,8 @@ class Model {
                 }) {
                     
                     
-                    print()
-                    print("HERE is where there are 2 pieces on top of eachother \(pieceX.id)")
+//                    print()
+//                    print("HERE is where there are 2 pieces on top of eachother \(pieceX.id)")
                     
                     for pieceXX in returnPiecesFromIndex(indexes: pieceX.indexes!) {
                         
