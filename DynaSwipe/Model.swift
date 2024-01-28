@@ -808,6 +808,7 @@ class Model {
             
             
             piece.canMoveOneSpace = true
+            piecesMovedX = false
         }
         
 //        addPiece = false
@@ -826,8 +827,8 @@ class Model {
 
         
        setNextPiece()
-        groupPiecesTogetherX()
-        updateLabels()
+//        groupPiecesTogetherX()
+//        updateLabels()
         
         
     }
@@ -845,6 +846,11 @@ class Model {
         setPieceCanMove(direction: direction)
         
         movePiecesThatShouldMove(direction: direction)
+        
+        if piecesMovedX == true {
+            
+            movePieces(direction: direction)
+        }
         
         
 //        printVisualDisplay(type: "canMove")
@@ -1397,7 +1403,7 @@ class Model {
             
             if piece.canMoveOneSpace == true {
                 
-//                piecesMovedX = true
+                piecesMovedX = true
                 
                 delegate?.movePieceView(piece: piece)
                 
