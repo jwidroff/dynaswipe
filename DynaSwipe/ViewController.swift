@@ -28,6 +28,8 @@ class ViewController: UIViewController {
     var instructionsShown = false
     var nextPiece = Piece()
     
+    var recognizer = UISwipeGestureRecognizer()
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -213,6 +215,9 @@ class ViewController: UIViewController {
     
     @objc func handleSwipe(sender:UISwipeGestureRecognizer) {
         
+        
+        recognizer = sender
+        
         switch sender.direction {
             
         case .up:
@@ -268,6 +273,18 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: ModelDelegate {
+    
+    func enableGestures() {
+        
+        addSwipeGestureRecognizer(view: model.board.view)
+    }
+    
+    func disableGestures() {
+        
+        model.board.view.gestureRecognizers?.removeAll()
+    }
+    
+    
     
 //    func setupInstructionsView(instructions: Instructions) {
 //
@@ -330,7 +347,7 @@ extension ViewController: ModelDelegate {
     
     func animateGrouping(piece: Piece) {
         
-        UIView.animate(withDuration: 0.25, delay: 0.0) {
+        UIView.animate(withDuration: 0.25, delay: 0.50) {
             let transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
             
             piece.view.transform = transform

@@ -43,6 +43,8 @@ protocol ModelDelegate {
     func setUpNextView(nextPiece: Piece)
     func shrinkPiece(view: UIView)
     func animateGrouping(piece: Piece)
+    func disableGestures()
+    func enableGestures()
 }
 
 class Model {
@@ -817,18 +819,28 @@ class Model {
     
     func initiateMove(direction: Direction) {
 
+        
+        delegate?.disableGestures()
+        
+        
         sortGroups(direction: direction)
         
         sortPieces(direction: direction)
 
         movePieces(direction: direction)
 
-        resetPieces()
 
         
        setNextPiece()
-//        groupPiecesTogetherX()
-//        updateLabels()
+        
+        
+        resetPieces()
+
+        groupPiecesTogetherX()
+        updateLabels()
+        
+        
+        delegate?.enableGestures()
         
         
     }
@@ -875,7 +887,8 @@ class Model {
     
     func setNextPiece() {
         
-        if addPiece == true {
+//        if addPiece == true {
+        
             
             setPieceIndex(piece: nextPiece)
             setPieceID(piece: nextPiece)
@@ -887,7 +900,7 @@ class Model {
             board.pieceGroups.append(group)
             
             delegate?.addPieceView(piece: nextPiece)
-        }
+//        }
         
         
         
@@ -2895,9 +2908,9 @@ class Model {
                 
                 piece.view.label.font = UIFont.boldSystemFont(ofSize: 8.0)
                 
-                piece.view.label.text = "\(piece.id)" //MARK: Take this out
+//                piece.view.label.text = "\(piece.id)" //MARK: Take this out
 
-//                piece.view.label.text = "\(piece.groupNumber)" //MARK: Take this out
+                piece.view.label.text = "\(piece.groupNumber)"
 
                 
                 
