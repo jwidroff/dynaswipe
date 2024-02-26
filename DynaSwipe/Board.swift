@@ -165,12 +165,12 @@ class BoardView : UIView {
     }
     
     private func addLocationLabel(view: UIView, xIndex: Int, yIndex: Int) {
-        
-        let labelView = UILabel(frame: view.frame)
-        labelView.text = "(\(xIndex),\(yIndex))"
-        labelView.font = .systemFont(ofSize: labelView.frame.width / 2.5)
-        labelView.textAlignment = .center
-        self.addSubview(labelView)
+//MARK: This will print the grid locations to the actual location (the x and y axis)
+//        let labelView = UILabel(frame: view.frame)
+//        labelView.text = "(\(xIndex),\(yIndex))"
+//        labelView.font = .systemFont(ofSize: labelView.frame.width / 2.5)
+//        labelView.textAlignment = .center
+//        self.addSubview(labelView)
     }
     
     private func makeSoft(view: UIView) {

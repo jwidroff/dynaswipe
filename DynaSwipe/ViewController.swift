@@ -347,7 +347,7 @@ extension ViewController: ModelDelegate {
     
     func animateGrouping(piece: Piece) {
         
-        UIView.animate(withDuration: 0.25, delay: 0.50) {
+        UIView.animate(withDuration: 0.25, delay: 0.00) {
             let transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
             
             piece.view.transform = transform
@@ -371,7 +371,7 @@ extension ViewController: ModelDelegate {
     
     func addPieceView(piece: Piece) {
 
-        UIView.animate(withDuration: 0.25, delay: 0.50, options: .curveEaseIn) {
+        UIView.animate(withDuration: 0.25, delay: 0.00, options: .curveEaseIn) {
 
             if let indexes = piece.indexes {
 
@@ -479,7 +479,7 @@ extension ViewController: ModelDelegate {
         
         for piece in pieces {
             
-            counter += 0.03
+//            counter += 0.03
             
             UIView.animate(withDuration: 1.0, delay: counter, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.9, options: .curveEaseInOut) {
                 

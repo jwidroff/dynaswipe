@@ -111,154 +111,163 @@ class Model {
     
     func setLevel() {
         
-        board.heightSpaces = 10
-        board.widthSpaces = 10
-        
-        let piece5 = Piece(indexes: Indexes(x: 0, y: 7), color: red)
-        
-        let piece1 = Piece(indexes: Indexes(x: 2, y: 6), color: red)
-                
-        let piece3 = Piece(indexes: Indexes(x: 2, y: 8), color: red)
-        
-        let piece4 = Piece(indexes: Indexes(x: 0, y: 6), color: red)
-        let piece6 = Piece(indexes: Indexes(x: 0, y: 8), color: red)
-        let piece7 = Piece(indexes: Indexes(x: 3, y: 8), color: red)
-        
-        let piece8 = Piece(indexes: Indexes(x: 0, y: 5), color: red)
-
-        let piece9 = Piece(indexes: Indexes(x: 0, y: 4), color: red)
-
-        let piece99 = Piece(indexes: Indexes(x: 2, y: 4), color: red)
-        
-        let piece98 = Piece(indexes: Indexes(x: 3, y: 6), color: red)
-        
-        let piece97 = Piece(indexes: Indexes(x: 3, y: 7), color: red)
-        
-        let piece96 = Piece(indexes: Indexes(x: 1, y: 4), color: red)
-        let piece95 = Piece(indexes: Indexes(x: 1, y: 6), color: red)
-        let piece94 = Piece(indexes: Indexes(x: 1, y: 8), color: red)
-        
-        
-        
-        
-        let group1 = Group(pieces: [piece5, piece1, piece3, piece4, piece6, piece7, piece8, piece9, piece99, piece98, piece97, piece96, piece95, piece94])
-        
-        
-        group1.id = 1
-        
-
-        
-        
-        let piece10 = Piece(indexes: Indexes(x: 6, y: 6), color: blue)
-
-//        let piece11 = Piece(indexes: Indexes(x: 6, y: 7), color: blue)
-
-        let piece12 = Piece(indexes: Indexes(x: 5, y: 6), color: blue)
-        
-        let piece13 = Piece(indexes: Indexes(x: 6, y: 5), color: blue)
-
-        let piece14 = Piece(indexes: Indexes(x: 6, y: 4), color: blue)
-
-        let piece15 = Piece(indexes: Indexes(x: 5, y: 4), color: blue)
-        
-       
-        
-        
-        let group2 = Group(pieces: [piece12, piece10, piece13, piece14, piece15])
-
-
-        group2.id = 2
-        
-        
-
-        let piece20 = Piece(indexes: Indexes(x: 5, y: 5), color: green)
-
-        
-        let group3 = Group(pieces: [piece20])//, piece21, piece20, piece23, piece24, piece25])
-        
-        
-        group3.id = 3
-        
-        
-        
-        
-        let piece30 = Piece(indexes: Indexes(x: 3, y: 5), color: orange)
-        let piece31 = Piece(indexes: Indexes(x: 3, y: 4), color: orange)
-        let piece32 = Piece(indexes: Indexes(x: 3, y: 3), color: orange)
-        let piece33 = Piece(indexes: Indexes(x: 2, y: 2), color: orange)
-        let piece34 = Piece(indexes: Indexes(x: 2, y: 5), color: orange)
-        let piece35 = Piece(indexes: Indexes(x: 3, y: 2), color: orange)
-
-
-        let group4 = Group(pieces: [piece30, piece31, piece32, piece33, piece34, piece35])
-
-
-        group4.id = 4
-        
-        
-        let piece40 = Piece(indexes: Indexes(x: 2, y: 7), color: purple)
-
-
-        let group5 = Group(pieces: [piece40])
-
-
-        group5.id = 5
-        
-//        board.pieces.append(piece15)
-        
-        
-        let piece50 = Piece(indexes: Indexes(x: 2, y: 1), color: yellow)
-
-//        let piece11 = Piece(indexes: Indexes(x: 6, y: 7), color: blue)
-
-        let piece51 = Piece(indexes: Indexes(x: 1, y: 1), color: yellow)
-        
-        let piece52 = Piece(indexes: Indexes(x: 1, y: 2), color: yellow)
-
-        let piece53 = Piece(indexes: Indexes(x: 1, y: 3), color: yellow)
-
-        let piece54 = Piece(indexes: Indexes(x: 2, y: 3), color: yellow)
-        
-//        let piece55 = Piece(indexes: Indexes(x: 1, y: 0), color: yellow)
-        
-        
-        
-        let group6 = Group(pieces: [piece50, piece51, piece52, piece53, piece54])//, piece55])
-
-
-        group6.id = 6
-        
-        
-        let piece70 = Piece(indexes: Indexes(x: 2, y: 0), color: green)
-
-        
-        let group7 = Group(pieces: [piece70])//, piece21, piece20, piece23, piece24, piece25])
-        
-        
-        group7.id = 7
-        
-        
-        let piece80 = Piece(indexes: Indexes(x: 1, y: 7), color: green)
-
-        
-        let group8 = Group(pieces: [piece80])//, piece21, piece20, piece23, piece24, piece25])
-        
-        
-        group8.id = 8
-        
-        
-        
-        
-//        let piece16 = Piece(indexes: Indexes(x: 0, y: 2), color: red)
-////        board.pieces.append(piece16)
+//        board.heightSpaces = 10
+//        board.widthSpaces = 10
+//
+//        let piece5 = Piece(indexes: Indexes(x: 0, y: 7), color: red)
+//
+//        let piece1 = Piece(indexes: Indexes(x: 2, y: 6), color: red)
+//
+//        let piece3 = Piece(indexes: Indexes(x: 2, y: 8), color: red)
+//
+//        let piece4 = Piece(indexes: Indexes(x: 0, y: 6), color: red)
+//        let piece6 = Piece(indexes: Indexes(x: 0, y: 8), color: red)
+//        let piece7 = Piece(indexes: Indexes(x: 3, y: 8), color: red)
+//
+//        let piece8 = Piece(indexes: Indexes(x: 0, y: 5), color: red)
+//
+//        let piece9 = Piece(indexes: Indexes(x: 0, y: 4), color: red)
+//
+//        let piece99 = Piece(indexes: Indexes(x: 2, y: 4), color: red)
+//
+//        let piece98 = Piece(indexes: Indexes(x: 3, y: 6), color: red)
+//
+//        let piece97 = Piece(indexes: Indexes(x: 3, y: 7), color: red)
+//
+//        let piece96 = Piece(indexes: Indexes(x: 1, y: 4), color: red)
+//        let piece95 = Piece(indexes: Indexes(x: 1, y: 6), color: red)
+//        let piece94 = Piece(indexes: Indexes(x: 1, y: 8), color: red)
 //
 //
-//        let group6 = Group(pieces: [piece16])
+//
+//
+//        let group1 = Group(pieces: [piece5, piece1, piece3, piece4, piece6, piece7, piece8, piece9, piece99, piece98, piece97, piece96, piece95, piece94])
+//
+//
+//        group1.id = 1
+//
+//
+//
+//
+//        let piece10 = Piece(indexes: Indexes(x: 6, y: 6), color: blue)
+//
+//        let piece12 = Piece(indexes: Indexes(x: 5, y: 6), color: blue)
+//
+//        let piece13 = Piece(indexes: Indexes(x: 6, y: 5), color: blue)
+//
+//        let piece14 = Piece(indexes: Indexes(x: 6, y: 4), color: blue)
+//
+//        let piece15 = Piece(indexes: Indexes(x: 5, y: 4), color: blue)
+//
+//
+//
+//
+//        let group2 = Group(pieces: [piece12, piece10, piece13, piece14, piece15])
+//
+//
+//        group2.id = 2
+//
+//
+//
+//        let piece20 = Piece(indexes: Indexes(x: 5, y: 5), color: green)
+//
+//
+//        let group3 = Group(pieces: [piece20])//, piece21, piece20, piece23, piece24, piece25])
+//
+//
+//        group3.id = 3
+//
+//
+//
+//
+//        let piece30 = Piece(indexes: Indexes(x: 3, y: 5), color: orange)
+//        let piece31 = Piece(indexes: Indexes(x: 3, y: 4), color: orange)
+//        let piece32 = Piece(indexes: Indexes(x: 3, y: 3), color: orange)
+//        let piece33 = Piece(indexes: Indexes(x: 2, y: 2), color: orange)
+//        let piece34 = Piece(indexes: Indexes(x: 2, y: 5), color: orange)
+//        let piece35 = Piece(indexes: Indexes(x: 3, y: 2), color: orange)
+//
+//
+//        let group4 = Group(pieces: [piece30, piece31, piece32, piece33, piece34, piece35])
+//
+//
+//        group4.id = 4
+//
+//
+//        let piece40 = Piece(indexes: Indexes(x: 2, y: 7), color: purple)
+//
+//
+//        let group5 = Group(pieces: [piece40])
+//
+//
+//        group5.id = 5
+//
+//
+//        let piece50 = Piece(indexes: Indexes(x: 2, y: 1), color: yellow)
+//
+//
+//        let piece51 = Piece(indexes: Indexes(x: 1, y: 1), color: yellow)
+//
+//        let piece52 = Piece(indexes: Indexes(x: 1, y: 2), color: yellow)
+//
+//        let piece53 = Piece(indexes: Indexes(x: 1, y: 3), color: yellow)
+//
+//        let piece54 = Piece(indexes: Indexes(x: 2, y: 3), color: yellow)
+//
+//
+//
+//        let group6 = Group(pieces: [piece50, piece51, piece52, piece53, piece54])//, piece55])
+//
+//
 //        group6.id = 6
+//
+//
+//        let piece70 = Piece(indexes: Indexes(x: 2, y: 0), color: green)
+//
+//
+//        let group7 = Group(pieces: [piece70])//, piece21, piece20, piece23, piece24, piece25])
+//
+//
+//        group7.id = 7
+//
+//
+//        let piece80 = Piece(indexes: Indexes(x: 1, y: 7), color: green)
+//
+//
+//        let group8 = Group(pieces: [piece80])//, piece21, piece20, piece23, piece24, piece25])
+//
+//
+//        group8.id = 8
+//
+//
+//
+//
+//
+//        board.pieceGroups = [group1, group4, group5, group3, group2, group6, group7, group8]
+//
+        
+        board.heightSpaces = 7
+        board.widthSpaces = 7
+        
+        
+        let piece100 = Piece(indexes: Indexes(x: 3, y: 3), color: red)
+
+
+        let group100 = Group(pieces: [piece100])//, piece21, piece20, piece23, piece24, piece25])
+
+
+        group100.id = 100
         
         
         
-        board.pieceGroups = [group1, group4, group5, group3, group2, group6, group7, group8]
+        
+        
+        board.pieceGroups = [group100]//, group4, group5, group3, group2, group6, group7, group8]
+        
+
+        
+        
+        
         
         var number = 0
         
@@ -325,7 +334,10 @@ class Model {
         var color2Return = UIColor()
         let colors = PieceColors()
         let pieceColors = colors.colors
-        let randomColors = ["red","blue","green","purple", "yellow", "orange"]
+        let randomColors = ["red","blue","green","purple", "yellow", "orange", "lightBlue", "teal"]
+        
+//        let randomColors = ["temp"]
+
         let randomIndex = arc4random_uniform(UInt32(randomColors.count))
         color2Return = pieceColors[randomColors[Int(randomIndex)]]!
         return color2Return

@@ -43,15 +43,16 @@ class ColorTheme { //TODO: Make all of these into static vars
 struct PieceColors {
     
     var colors = [
-        "red" : UIColor.init(red: 0.9, green: 0.0, blue: 0.0, alpha: 1.0),
+        "red" : UIColor.init(red: 0.7, green: 0.1, blue: 0.0, alpha: 0.5),
         "blue" : UIColor.init(red: 0.0, green: 0.0, blue: 0.9, alpha: 0.8),
         "green" : UIColor.init(red: 0.0, green: 9.0, blue: 0.4, alpha: 0.8),
         "purple" : UIColor.init(red: 0.5, green: 0.0, blue: 0.5, alpha: 0.5),
         "yellow" : UIColor.init(red: 0.9, green: 0.9, blue: 0.3, alpha: 1.0),
-        "orange" : UIColor.init(red: 0.9, green: 0.6, blue: 0.0, alpha: 0.8)
+        "orange" : UIColor.init(red: 0.9, green: 0.6, blue: 0.0, alpha: 0.8),
 
+        "lightBlue" : UIColor.init(red: 0.2, green: 0.3, blue: 0.7, alpha: 0.5),
         
-        
+        "teal" : UIColor.init(red: 0.0, green: 0.7, blue: 0.7, alpha: 0.5),
         
         
         
