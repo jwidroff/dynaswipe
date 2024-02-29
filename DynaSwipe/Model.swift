@@ -851,11 +851,49 @@ class Model {
         groupPiecesTogetherX()
         updateLabels()
         
+        // Add func to find squares and get rid of the pieces
+        
+        find4Square()
+        
         
         delegate?.enableGestures()
         
         
     }
+    
+    func find4Square() {
+        
+        for group in board.pieceGroups {
+            
+            print("group number \(group.id)")
+            
+            for piece in group.pieces.sorted(by: { (piece1, piece2) in
+                (piece1.indexes?.x!)! < (piece2.indexes?.x!)!
+            }).sorted(by: { (piece3, piece4) in
+                (piece3.indexes?.y!)! < (piece4.indexes?.y!)!
+            }) {
+                
+                print(piece.indexes)
+                
+                if group.pieces.contains(where: { pieceA in
+                    pieceA.indexes == Indexes(x: (piece.indexes?.x!)! + 1,y: (piece.indexes?.y!)!)
+                }) && group.pieces.contains(where: { pieceA in
+                    pieceA.indexes == Indexes(x: (piece.indexes?.x!)!,y: (piece.indexes?.y!)! + 1)
+                }) && group.pieces.contains(where: { pieceA in
+                    pieceA.indexes == Indexes(x: (piece.indexes?.x!)! + 1, y: (piece.indexes?.y!)! + 1)
+                }) {
+                    
+                    print("FOUND A 4SQUARE!")
+                    
+                }
+                
+            }
+            
+            
+        }
+        
+    }
+    
     
     func setPieceCanMoveOneSpace(direction: Direction) {
         
