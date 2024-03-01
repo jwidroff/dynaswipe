@@ -335,7 +335,7 @@ class Model {
         let colors = PieceColors()
         let pieceColors = colors.colors
 //        let randomColors = ["red","blue","green","purple", "yellow", "orange", "lightBlue", "teal", "purp"]
-        let randomColors = ["red", "lightBlue", "teal", "purp", "purp2"]
+        let randomColors = ["red", "lightBlue", "teal", "purp"]
 //        let randomColors = ["temp"]
 
         let randomIndex = arc4random_uniform(UInt32(randomColors.count))
