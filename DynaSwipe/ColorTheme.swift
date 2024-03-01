@@ -26,7 +26,9 @@ class ColorTheme { //TODO: Make all of these into static vars
     init() {
         
 //        gameBackground = UIColor.yellow
-        ColorTheme.boardBackground = UIColor(red: 0.6, green: 0.5, blue: 0.7, alpha: 0.5)
+//        ColorTheme.boardBackground = UIColor(red: 0.6, green: 0.5, blue: 0.7, alpha: 0.5)
+        
+        ColorTheme.boardBackground = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.1)
         ColorTheme.pieceBackground = UIColor(red: 0.6, green: 0.5, blue: 0.7, alpha: 0.7)
 //        pieceBackground = UIColor.clear
         ColorTheme.lockedPieceBackground = UIColor(red: 0.2, green: 0.1, blue: 0.2, alpha: 1.0)
@@ -43,20 +45,40 @@ class ColorTheme { //TODO: Make all of these into static vars
 struct PieceColors {
     
     var colors = [
-        "red" : UIColor.init(red: 0.7, green: 0.1, blue: 0.0, alpha: 0.5),
-        "blue" : UIColor.init(red: 0.0, green: 0.0, blue: 0.9, alpha: 0.8),
-        "green" : UIColor.init(red: 0.0, green: 9.0, blue: 0.4, alpha: 0.8),
-        "purple" : UIColor.init(red: 0.5, green: 0.0, blue: 0.5, alpha: 0.5),
-        "yellow" : UIColor.init(red: 0.9, green: 0.9, blue: 0.3, alpha: 1.0),
-        "orange" : UIColor.init(red: 0.9, green: 0.6, blue: 0.0, alpha: 0.8),
+        "red" : UIColor.init(red: 0.7, green: 0.1, blue: 0.0, alpha: 0.6),
+        "blue" : UIColor.init(red: 0.0, green: 0.1, blue: 0.9, alpha: 0.6),
+        "green" : UIColor.init(red: 0.0, green: 9.0, blue: 0.4, alpha: 0.6),
+        "purple" : UIColor.init(red: 0.5, green: 0.0, blue: 0.5, alpha: 0.6),
+        "yellow" : UIColor.init(red: 0.9, green: 0.9, blue: 0.3, alpha: 0.6),
+        "orange" : UIColor.init(red: 0.9, green: 0.6, blue: 0.0, alpha: 0.6),
 
-        "lightBlue" : UIColor.init(red: 0.2, green: 0.3, blue: 0.7, alpha: 0.5),
-        
-        "teal" : UIColor.init(red: 0.0, green: 0.7, blue: 0.7, alpha: 0.5),
-        
-        
-        
+        "lightBlue" : UIColor.init(red: 0.2, green: 0.3, blue: 0.7, alpha: 0.6),
+
+        "teal" : UIColor.init(red: 0.0, green: 0.7, blue: 0.7, alpha: 0.6),
+
+        "purp" : UIColor(red: 0.6, green: 0.3, blue: 0.7, alpha: 0.6),
     ]
+    
+//    var colors = [
+//        "red" : UIColor.init(red: 0.7, green: 0.1, blue: 0.0, alpha: 0.5),
+//        "yellow" : UIColor.init(red: 0.9, green: 0.9, blue: 0.3, alpha: 0.5),
+//        "blue" : UIColor.init(red: 0.0, green: 0.1, blue: 0.9, alpha: 0.5),
+//        "green" : UIColor.init(red: 0.0, green: 9.0, blue: 0.4, alpha: 0.5),
+//        "purple" : UIColor.init(red: 0.5, green: 0.0, blue: 0.5, alpha: 0.5),
+//        "yellow" : UIColor.init(red: 0.9, green: 0.9, blue: 0.3, alpha: 0.5),
+//        "orange" : UIColor.init(red: 0.9, green: 0.6, blue: 0.0, alpha: 0.5),
+//
+//        "lightBlue" : UIColor.init(red: 0.2, green: 0.3, blue: 0.7, alpha: 0.5),
+//
+//        "teal" : UIColor.init(red: 0.0, green: 0.7, blue: 0.7, alpha: 0.5),
+//
+//        "purp" : UIColor(red: 0.6, green: 0.5, blue: 0.7, alpha: 0.5),
+//
+//    ]
+    
+    
+    
+    
 //    static var teal = UIColor.systemTeal
 ////    static var red = UIColor.red
 //    static var yellow = UIColor.systemTeal

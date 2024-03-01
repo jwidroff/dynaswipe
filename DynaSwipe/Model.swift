@@ -246,11 +246,11 @@ class Model {
 //        board.pieceGroups = [group1, group4, group5, group3, group2, group6, group7, group8]
 //
         
-        board.heightSpaces = 7
-        board.widthSpaces = 7
+        board.heightSpaces = 9
+        board.widthSpaces = 9
         
         
-        let piece100 = Piece(indexes: Indexes(x: 3, y: 3), color: red)
+        let piece100 = Piece(indexes: Indexes(x: 4, y: 4), color: red)
 
 
         let group100 = Group(pieces: [piece100])//, piece21, piece20, piece23, piece24, piece25])
@@ -334,8 +334,8 @@ class Model {
         var color2Return = UIColor()
         let colors = PieceColors()
         let pieceColors = colors.colors
-        let randomColors = ["red","blue","green","purple", "yellow", "orange", "lightBlue", "teal"]
-        
+//        let randomColors = ["red","blue","green","purple", "yellow", "orange", "lightBlue", "teal", "purp"]
+        let randomColors = ["red", "lightBlue", "teal", "purp", "purp2"]
 //        let randomColors = ["temp"]
 
         let randomIndex = arc4random_uniform(UInt32(randomColors.count))

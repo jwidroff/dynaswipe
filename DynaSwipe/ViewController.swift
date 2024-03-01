@@ -117,8 +117,8 @@ class ViewController: UIViewController {
                 
         model.board.view.translatesAutoresizingMaskIntoConstraints = false
         var constraints = [NSLayoutConstraint]()
-        constraints.append(model.board.view.widthAnchor.constraint(equalToConstant: view.frame.width / 10 * 9))
-        constraints.append(model.board.view.heightAnchor.constraint(equalToConstant: view.frame.width / 10 * 9))
+        constraints.append(model.board.view.widthAnchor.constraint(equalToConstant: view.frame.width))// / 10 * 9))
+        constraints.append(model.board.view.heightAnchor.constraint(equalToConstant: view.frame.width))// / 10 * 9))
         constraints.append(model.board.view.centerXAnchor.constraint(equalTo: view.centerXAnchor))
         constraints.append(model.board.view.centerYAnchor.constraint(equalTo: view.centerYAnchor))
         NSLayoutConstraint.activate(constraints)
@@ -126,7 +126,7 @@ class ViewController: UIViewController {
     
     func setSizes(board: Board) {
 
-        boardWidth = view.frame.width / 10 * 9
+        boardWidth = view.frame.width// / 10 * 9
         boardHeight = boardWidth
         widthCushion = 0
         heightCushion = 0
@@ -573,8 +573,9 @@ extension ViewController: ModelDelegate {
         
         let nextViewHeight = pieceHeight
         let nextViewWidth = pieceWidth
-        let nextViewYFloat = view.center.y - (nextViewHeight / 2) - (pieceHeight / 2)
-        let nextViewXFloat = view.center.x - (nextViewWidth / 2) - (pieceWidth / 2)
+//        let nextViewYFloat = view.center.y - (nextViewHeight / 2) - (pieceHeight / 2)
+        let nextViewYFloat = (view.frame.midY)
+        let nextViewXFloat = view.center.x - (nextViewWidth / 2)// - (pieceWidth / 2)
         let frame = CGRect(x: nextViewXFloat, y: nextViewYFloat, width: nextViewWidth, height: nextViewHeight)
         nextPiece.view = ShapeView(frame: frame, piece: nextPiece, groups: nil)
         
