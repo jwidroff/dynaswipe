@@ -96,8 +96,9 @@ class Model {
         
         setBoard()
         
-        
-        groupPiecesTogetherX()
+        groupPiecesTogether()
+
+//        groupPiecesTogetherX()
 
         
     }
@@ -847,8 +848,9 @@ class Model {
         
         
         resetPieces()
+        groupPiecesTogether()
 
-        groupPiecesTogetherX()
+//        groupPiecesTogetherX()
         updateLabels()
         
         // Add func to find squares and get rid of the pieces
@@ -917,7 +919,7 @@ class Model {
         
 //        printVisualDisplay(type: "canMove")
 
-        printVisualDisplay(type: "pieceID")
+        printVisualDisplay(type: "groupID")
 
         
 //        print("groupsThatHaveMoved = \(groupsThatHaveMoved)")
@@ -2642,7 +2644,141 @@ class Model {
         
     }
     
-    
+    func groupPiecesTogether() {
+                
+        var piecesToSkip = [Piece]()
+                    
+            for piece in board.pieces.sorted(by: { (piece1, piece2) in
+                (piece1.indexes?.x!)! < (piece2.indexes?.x!)!
+            }).sorted(by: { (piece3, piece4) in
+                (piece3.indexes?.y!)! < (piece4.indexes?.y!)!
+            }) {
+                
+//                if !piecesToSkip.contains(where: { (pieceA) in
+//                    pieceA.id == piece.id
+//                }) {
+                    
+                    for pieceX in board.pieces.sorted(by: { (piece1, piece2) in
+                        (piece1.indexes?.x!)! < (piece2.indexes?.x!)!
+                    }).sorted(by: { (piece3, piece4) in
+                        (piece3.indexes?.y!)! < (piece4.indexes?.y!)!
+                    }) {
+                        
+                        if !returnGroup(groupNumber: pieceX.groupNumber).pieces.contains(where: { (pieceB) in
+                            pieceB.id == piece.id
+                        }) {
+                            
+                            if pieceX.indexes == Indexes(x:piece.indexes?.x, y: (piece.indexes?.y!)! + 1)  || pieceX.indexes == Indexes(x:(piece.indexes?.x!)! + 1, y: (piece.indexes?.y!)!) {
+                                
+                                
+                                    
+                                    
+                                    if pieceX.color == piece.color {
+                                        
+                                        if !piecesToSkip.contains(where: { (pieceA) in
+                                            pieceA.id == pieceX.id
+                                        }) {
+                                        
+                                        let groupIdToBeDeleted = pieceX.groupNumber
+                                            
+                                        var group2Remain = piece.groupNumber
+                                        
+                                        
+                                        var groupPieces = returnGroup(groupNumber: pieceX.groupNumber).pieces
+                                        
+                                        for piece1 in groupPieces {
+                                            
+                                            piece1.groupNumber = piece.groupNumber
+                                            piecesToSkip.append(piece1)
+                                            
+                                            
+                                            for groupZ in board.pieceGroups {
+                                                if groupZ.id == group2Remain {
+                                                    
+                                                    
+                                                    
+                                                    groupZ.pieces.append(piece1)
+                                                    
+                                                    
+                                                }
+                                                
+                                                if groupZ.id == groupIdToBeDeleted {
+                                                    
+                                                    groupPieces.removeAll { (pieceP) in
+                                                        pieceP.id == piece1.id
+                                                    }
+                                                    
+                                                    
+                                                }
+                                                
+                                                
+                                            }
+                                        }
+                                        
+    //                                    board.pieceGroups.removeAll { (groupA) in
+    //                                        groupA.id == groupIdToBeDeleted
+    //                                    }
+                                        
+    //                                    board.pieceGroups.removeAll { (group) in
+    //                                        group.id == groupIdToBeDeleted
+    //                                    }
+                                        
+                                        
+    //                                    board.pieceGroups
+                                        
+                                        
+                                        print("We Found a match!")
+                                        
+                                        
+                                    }
+                                    
+                                }
+                                
+                                
+                                
+                                
+    //                            if pieceX.id != piece.id {
+    //
+    //                                for pieceXX in returnGroup(groupNumber: pieceX.id).pieces {
+    //
+    //                                    pieceXX.groupNumber = piece.groupNumber
+    //
+    //                                    returnGroup(groupNumber: piece.groupNumber).pieces.append(pieceXX)
+    //
+    //                                    print("Added piece \(pieceXX.id) to group \(piece.groupNumber)")
+    //
+    //                                    piecesToSkip.append(pieceXX)
+    //
+    //                                }
+    //
+    //
+    //                            }
+                                
+                            }
+                            
+                        }
+                        
+                        
+                        
+                        
+                    }
+                    
+//                }
+                
+                
+                
+                
+                
+                
+            }
+            
+            
+            
+            
+        
+        
+        
+    }
     
     func groupPiecesTogetherX() {
         
@@ -2652,11 +2788,11 @@ class Model {
 
         for group in board.pieceGroups{
             
-//            print("Group ID = \(group.id)")
+            print("Group ID = \(group.id)")
             
             for piece in group.pieces {
                 
-//                print("Skip contains \(pieces2Skip)")
+                print("Skip contains \(pieces2Skip)")
 
                 
                 if pieces2Skip.contains(where: { (pieceX) in
