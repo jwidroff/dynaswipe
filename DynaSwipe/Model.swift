@@ -251,7 +251,7 @@ class Model {
         board.widthSpaces = 9
         
         
-        let piece100 = Piece(indexes: Indexes(x: 4, y: 4), color: red)
+        let piece100 = Piece(indexes: Indexes(x: 0, y: 0), color: red)
 
 
         let group100 = Group(pieces: [piece100])//, piece21, piece20, piece23, piece24, piece25])
@@ -831,51 +831,44 @@ class Model {
     }
     
     func initiateMove(direction: Direction) {
-
         
         delegate?.disableGestures()
         
-        
-        sortGroups(direction: direction)
-        
         sortPieces(direction: direction)
-
         movePieces(direction: direction)
-
-
-        
-       setNextPiece()
-        
-        
+        setNextPiece()
         resetPieces()
         groupPiecesTogether()
-
-//        groupPiecesTogetherX()
         updateLabels()
-        
-        // Add func to find squares and get rid of the pieces
-        
         find4Square()
         
+        groupsThatHaveMovedBack.removeAll()
+        groups2Return.removeAll()
+        board.locationAndIDs.removeAll() //MARK: NEEDED
+        piecesToMoveBack.removeAll()
+        groupsThatHaveMoved.removeAll()
         
         delegate?.enableGestures()
         
-        
     }
-    
+    var group2Delete = [Group]()
+
     func find4Square() {
+        
+        var piecesToDelete = [Piece]()
+        
         
         for group in board.pieceGroups {
             
-            print("group number \(group.id)")
-            
+//            print("group number \(group.id)")
+                        
             for piece in group.pieces.sorted(by: { (piece1, piece2) in
                 (piece1.indexes?.x!)! < (piece2.indexes?.x!)!
             }).sorted(by: { (piece3, piece4) in
                 (piece3.indexes?.y!)! < (piece4.indexes?.y!)!
             }) {
                 
-                print(piece.indexes)
+//                print(piece.indexes)
                 
                 if group.pieces.contains(where: { pieceA in
                     pieceA.indexes == Indexes(x: (piece.indexes?.x!)! + 1,y: (piece.indexes?.y!)!)
@@ -885,14 +878,54 @@ class Model {
                     pieceA.indexes == Indexes(x: (piece.indexes?.x!)! + 1, y: (piece.indexes?.y!)! + 1)
                 }) {
                     
-                    print("FOUND A 4SQUARE!")
+                    
+                    
+                    
+                    for piece in group.pieces {
+                        
+                        piecesToDelete.append(piece)
+                        
+                    }
+
+                    
+                    //MARK: THE PROBLEM IS THAT WERE GETTING RID OF THE ENTIRE GROUP WHEN SOMETIMES THE WHOLE GROUP SHOULDNT BE REMOVED - SOMETIMES ITS PIECES SHOULD BE REDUCED. SOMETIMES IT SHOULD BE SPLIT INTO 2 GROUPS AND SOMETIMES IT SHOULD BE REMOVED COMPLETELY
+                    if !group2Delete.contains(where: { (groupZ) in
+
+                        groupZ.id == piece.groupNumber
+                    }) {
+                        group2Delete.append(group)
+
+                    }
+                    
+                    
+                    
+                    
+                    
+//                    print("FOUND A 4SQUARE!")
                     
                 }
-                
+
             }
             
             
         }
+        
+        
+        for piece in piecesToDelete {
+
+            delegate?.removeView(view: piece.view)
+            
+            board.locationAndIDs[piece.indexes!] = nil
+            
+            board.pieces.removeAll { (pieceB) -> Bool in
+                piece.id == pieceB.id
+//                        print("piece.id = \(piece.id) & pieceB.id = \(pieceB.id)")
+            }
+            
+        }
+        
+        
+        
         
     }
     
@@ -917,9 +950,8 @@ class Model {
         }
         
         
-//        printVisualDisplay(type: "canMove")
+//        printVisualDisplay(type: "groupID")
 
-        printVisualDisplay(type: "groupID")
 
         
 //        print("groupsThatHaveMoved = \(groupsThatHaveMoved)")
@@ -935,7 +967,7 @@ class Model {
         
     }
     
-    
+    var groupIDMax = 0
     
     func setNextPiece() {
         
@@ -947,7 +979,13 @@ class Model {
             board.pieces.append(nextPiece)
             
             let group = Group(pieces: [nextPiece])
-            group.id = board.pieceGroups.map({$0.id}).max()! + 1
+//            group.id = board.pieceGroups.map({$0.id}).max()! + 1
+        
+        group.id = groupIDMax + 1
+        groupIDMax += 1
+
+        
+        
             nextPiece.groupNumber = group.id
             board.pieceGroups.append(group)
             
@@ -966,27 +1004,43 @@ class Model {
 //        print("")
 //        print("setPiecesMobility called")
 
+        
+        
         setIndexes(direction: direction) //Sets the prev, current and next indexes. Also sets whether the piece can move one space
         
+        print("After Set Indexes")
+        printVisualDisplay(type: "pieceID")
         
 
         
         checkGroup(direction: direction) //checks groups to see if any pieces cant move. If a piece cant move, the whole group is set to not being able to move
         
         
+        print("After check group")
+        printVisualDisplay(type: "pieceID")
+        
         setIndexesX(direction: direction) //Sets indexes of pieces
         
+        print("After sex indexes X")
+        printVisualDisplay(type: "pieceID")
         
 
         moveBack(direction: direction) //Changes the indexes of pieces back when there is overlap
         
-
+        print("After move back")
+        printVisualDisplay(type: "pieceID")
+        
+        
+        
 //        checkForDuplicatesX(direction: direction) //Makes sure that if part of a group doesnt move, the rest of the group doesnt move either
         
         
         
-        updateBoard()
+//        updateBoard()
 
+        print("After update board")
+        printVisualDisplay(type: "pieceID")
+        
         
     }
     
@@ -1108,12 +1162,12 @@ class Model {
     
     func moveBack(direction: Direction) {
         
-        print("Move Back Called")
+//        print("Move Back Called")
         var recursion = false
         
         for pieceX in board.pieces {
             
-            print("ID = \(pieceX.id) CI = \( pieceX.indexes!)")
+//            print("ID = \(pieceX.id) CI = \( pieceX.indexes!)")
 
             for pieceY in board.pieces {
 
@@ -1137,7 +1191,7 @@ class Model {
                             pieceY.indexes = pieceY.previousIndex
                             pieceY.canMoveOneSpace = false
                             
-                            print("piece with ID of \(pieceY.id) was moved back")
+//                            print("piece with ID of \(pieceY.id) was moved back")
                             
                             
                         } else {
@@ -1145,7 +1199,7 @@ class Model {
                             pieceX.indexes = pieceX.previousIndex
                             pieceX.canMoveOneSpace = false
                             
-                            print("piece with ID of \(pieceX.id) was moved back")
+//                            print("piece with ID of \(pieceX.id) was moved back")
                         }
 
                     case .down:
@@ -1155,7 +1209,7 @@ class Model {
                             pieceY.indexes = pieceY.previousIndex
                             pieceY.canMoveOneSpace = false
                             
-                            print("piece with ID of \(pieceY.id) was moved back")
+//                            print("piece with ID of \(pieceY.id) was moved back")
                             
                             
                         } else {
@@ -1163,7 +1217,7 @@ class Model {
                             pieceX.indexes = pieceX.previousIndex
                             pieceX.canMoveOneSpace = false
                             
-                            print("piece with ID of \(pieceX.id) was moved back")
+//                            print("piece with ID of \(pieceX.id) was moved back")
                         }
 
 
@@ -1174,14 +1228,14 @@ class Model {
                             pieceY.indexes = pieceY.previousIndex
                             pieceY.canMoveOneSpace = false
                             
-                            print("piece with ID of \(pieceY.id) was moved back")
+//                            print("piece with ID of \(pieceY.id) was moved back")
                             
                         } else {
 
                             pieceX.indexes = pieceX.previousIndex
                             pieceX.canMoveOneSpace = false
                             
-                            print("piece with ID of \(pieceX.id) was moved back")
+//                            print("piece with ID of \(pieceX.id) was moved back")
                         }
 
                     case .right:
@@ -1191,7 +1245,7 @@ class Model {
                             pieceY.indexes = pieceY.previousIndex
                             pieceY.canMoveOneSpace = false
                             
-                            print("piece with ID of \(pieceY.id) was moved back")
+//                            print("piece with ID of \(pieceY.id) was moved back")
                             
                             
                         } else {
@@ -1199,7 +1253,7 @@ class Model {
                             pieceX.indexes = pieceX.previousIndex
                             pieceX.canMoveOneSpace = false
                             
-                            print("piece with ID of \(pieceX.id) was moved back")
+//                            print("piece with ID of \(pieceX.id) was moved back")
                             
                         }
 
@@ -2727,7 +2781,7 @@ class Model {
     //                                    board.pieceGroups
                                         
                                         
-                                        print("We Found a match!")
+//                                        print("We Found a match!")
                                         
                                         
                                     }
@@ -2788,11 +2842,11 @@ class Model {
 
         for group in board.pieceGroups{
             
-            print("Group ID = \(group.id)")
+//            print("Group ID = \(group.id)")
             
             for piece in group.pieces {
                 
-                print("Skip contains \(pieces2Skip)")
+//                print("Skip contains \(pieces2Skip)")
 
                 
                 if pieces2Skip.contains(where: { (pieceX) in
@@ -3096,7 +3150,7 @@ class Model {
                 
 //                piece.view.label.text = "\(piece.id)" //MARK: Take this out
 
-                piece.view.label.text = "\(piece.groupNumber)"
+                piece.view.label.text = "\(piece.id)"
 
                 
                 
@@ -4338,7 +4392,7 @@ class Model {
         
         for int in groupsThatHaveMovedBack { //THIS DOESNT INCLUDE GROUPS WITH SINGLE PIECES
             
-            print("Group number \(int)")
+//            print("Group number \(int)")
             
             for pieceX in returnGroup(groupNumber: int).pieces {
                 
