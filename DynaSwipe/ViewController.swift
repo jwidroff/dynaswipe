@@ -466,7 +466,7 @@ extension ViewController: ModelDelegate {
         
         let center = CGPoint(x: (self.boardWidth / 2) - (pieceWidth / 2), y: 500)
         
-        var counter = 0.0
+        let counter = 0.0
         
         let pieceGroups = model.board.pieceGroups
         
@@ -520,9 +520,7 @@ extension ViewController: ModelDelegate {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             let action = UIAlertAction(title: "Ok", style: .default) { (action) in
                 alert.dismiss(animated: true) {
-                                        
-                    self.model.resetGame()
-                    
+                                                            
                     let delayedTime = DispatchTime.now() + .milliseconds(Int(25))
                     DispatchQueue.main.asyncAfter(deadline: delayedTime) {
 

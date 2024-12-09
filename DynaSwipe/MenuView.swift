@@ -64,7 +64,7 @@ class MenuView: UIView, UITableViewDataSource, UITableViewDelegate, UINavigation
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
         cell.textLabel?.text = levelNames[indexPath.row]
 
-        let rect = CGRect(x: 0, y: 0, width: cell.frame.height, height: cell.frame.height)
+//        let rect = CGRect(x: 0, y: 0, width: cell.frame.height, height: cell.frame.height)
 
         if model.defaults.integer(forKey: "highestLevel") < indexPath.row {
 
@@ -77,7 +77,6 @@ class MenuView: UIView, UITableViewDataSource, UITableViewDelegate, UINavigation
 
         if self.model.defaults.integer(forKey: "highestLevel") >= indexPath.row {
             
-            self.model.resetGame()
             self.model.delegate?.removeViews()
             self.model.setUpGame()
             self.model.setUpControlsAndInstructions()
